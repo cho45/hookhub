@@ -19,12 +19,13 @@ CLEAN.include [%w[war/WEB-INF/lib/* war/WEB-INF/classes]]
 @classpath << SCALA_HOME + "lib/scala-compiler.jar"
 @classpath.flatten!
 
-warn "classpath:"
-@classpath.each do |path|
-	warn path
-end
-
 ENV['CLASSPATH'] = @classpath.join(":")
+
+def src(ext='', pre='')
+	FileList["src/**/*.scala"].map {|i|
+		pre + i.sub(/^src\//, '').sub(/\..+?$/, ext)
+	}
+end
 
 def scalac(*args)
 	sh "scalac", *args
@@ -36,7 +37,7 @@ task :run => [:build] do
 	sh GAE_SDK + "bin/dev_appserver.sh", "war"
 end
 
-task :build => [:copylibs, "war/WEB-INF/classes"] + FileList["war/WEB-INF/classes/**/*.scala"].map {|i| i.sub(/scala$/, 'class') }
+task :build => [:copylibs, "war/WEB-INF/classes"] + src('.class', 'war/WEB-INF/classes/')
 
 task :copylibs do
 	dest = Pathname("war/WEB-INF/lib")
@@ -51,13 +52,15 @@ task :copylibs do
 	end
 end
 
-file "war/WEB-INF/classes" => FileList["src/**/*"] do |t|
-	p t
+file "war/WEB-INF/classes" do |t|
 	classes = Pathname("war/WEB-INF/classes")
+#	classes.rmtree if classes.exist?
+#	classes.mkpath
 	cp_r "src", classes
 end
 
-
-rule ".class" => [".scala"] do |t|
-	scalac "-d", "war/WEB-INF/classes", t.source
+src.each do |s|
+	file "war/WEB-INF/classes/#{s}.class" => "src/#{src}.scala" do |t|
+		scalac "-d", "war/WEB-INF/classes", "src/#{src}.scala"
+	end
 end
