@@ -36,19 +36,28 @@ task :run => [:build] do
 	sh GAE_SDK + "bin/dev_appserver.sh", "war"
 end
 
-task :build => [:copylibs] do
-	classes = Pathname("war/WEB-INF/classes")
-
-	cp_r "src", classes
-	# file, rule を使うようにする
-	scalac "-d", classes, *Pathname.glob("src/**/*.scala")
-end
+task :build => [:copylibs, "war/WEB-INF/classes"] + FileList["war/WEB-INF/classes/**/*.scala"].map {|i| i.sub(/scala$/, 'class') }
 
 task :copylibs do
 	dest = Pathname("war/WEB-INF/lib")
 	dest.mkpath unless dest.exist?
 
-	cp Pathname.glob(SCALA_HOME + "**/scala-library.jar"), dest
-	cp Pathname.glob(GAE_SDK    + "lib/user/appengine-api-*-sdk-*.jar"), dest
+	Pathname.glob([
+		SCALA_HOME + "**/scala-library.jar",
+		GAE_SDK + "lib/user/appengine-api-*-sdk-*.jar"
+	].join("\0")) do |jar|
+		next if (dest + jar.basename).exist?
+		cp jar, dest
+	end
 end
 
+file "war/WEB-INF/classes" => FileList["src/**/*"] do |t|
+	p t
+	classes = Pathname("war/WEB-INF/classes")
+	cp_r "src", classes
+end
+
+
+rule ".class" => [".scala"] do |t|
+	scalac "-d", "war/WEB-INF/classes", t.source
+end
