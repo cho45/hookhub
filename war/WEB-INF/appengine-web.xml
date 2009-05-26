@@ -7,5 +7,19 @@
 	<system-properties>
 		<property name="java.util.logging.config.file" value="WEB-INF/logging.properties"/>
 	</system-properties>
-	
+
+	<static-files>
+		<include path="/js/*" />
+		<include path="/css/*" />
+		<include path="/images/*" />
+		<include path="/static/*" />
+	</static-files>
+
+	<!--system-properties>
+		<property name="myapp.maximum-message-length" value="140" />
+		<property name="myapp.notify-every-n-signups" value="1000" />
+		<property name="myapp.notify-url" value="http://www.example.com/signupnotify" />
+	</system-properties-->
+	<!--sessions-enabled>true</sessions-enabled-->
+
 </appengine-web-app>

@@ -17,7 +17,7 @@ class HelloServlet extends HttpServlet {
 				<html>
 					<head><title>Hello World</title></head>
 				<body>
-					<h1>Wellcome { user.getNickname() } !</h1>
+					<h1>Wellcome { user.getNickname() } ! <a href={ userService.createLogoutURL(req.getRequestURI()) }>logout</a> </h1>
 				</body>
 				</html>
 			)
