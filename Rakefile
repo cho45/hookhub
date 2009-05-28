@@ -60,7 +60,7 @@ file "war/WEB-INF/classes" do |t|
 end
 
 src.each do |s|
-	file "war/WEB-INF/classes/#{s}.class" => "src/#{src}.scala" do |t|
-		scalac "-d", "war/WEB-INF/classes", "src/#{src}.scala"
+	file "war/WEB-INF/classes/#{s}.class" => "src/#{s}.scala" do |t|
+		scalac "-d", "war/WEB-INF/classes", "src/#{s}.scala"
 	end
 end
