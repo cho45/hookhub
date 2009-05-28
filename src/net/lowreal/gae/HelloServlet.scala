@@ -13,14 +13,15 @@ class HelloServlet extends HttpServlet {
 			resp.sendRedirect(userService.createLoginURL(req.getRequestURI()));
 		} else {
 			resp.setContentType("text/html")
-			resp.getWriter().println(
+			resp.getWriter().println {
 				<html>
 					<head><title>Hello World</title></head>
 				<body>
 					<h1>Wellcome { user.getNickname() } ! <a href={ userService.createLogoutURL(req.getRequestURI()) }>logout</a> </h1>
 				</body>
 				</html>
-			)
+			}
+
 		}
 	}
 }
