@@ -15,7 +15,8 @@ class HttpRequestDispatcher extends Filter {
 				println(req)
 				println(res)
 				res.setContentType("text/html")
-				res.getWriter().println {
+				res.getWriter.println { """<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">""" }
+				res.getWriter.println {
 					<html>
 						<head><title>Hello World</title></head>
 						<style type='text/css'><![CDATA[
