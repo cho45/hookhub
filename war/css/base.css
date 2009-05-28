@@ -6,3 +6,8 @@ body {
 }
 
 
+pre {
+	background: #efefef;
+	border: #ccc;
+	padding: 0.5em;
+}
