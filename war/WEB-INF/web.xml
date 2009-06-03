@@ -7,6 +7,14 @@
 	<filter>
 		<filter-name>HttpRequestDispatcher</filter-name>
 		<filter-class>net.lowreal.skirts.HttpRequestDispatcher</filter-class>
+		<init-param>
+			<param-name>application</param-name>
+			<param-value>net.lowreal.hookhub.Application</param-value>
+		</init-param>
+		<init-param>
+			<param-name>static</param-name>
+			<param-value>^/(?:css|js|images|static).*</param-value>
+		</init-param>
 	</filter>
 
 	<filter-mapping>
