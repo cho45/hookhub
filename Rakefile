@@ -30,6 +30,8 @@ end
 
 def scalac(*args)
 	sh "scalac", *args
+rescue => e
+	puts e
 end
 
 task :default => :run
