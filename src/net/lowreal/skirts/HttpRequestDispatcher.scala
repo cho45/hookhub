@@ -16,17 +16,16 @@ class HttpRequestDispatcher extends Filter {
 		router = klass.newInstance.asInstanceOf[HttpRouter];
 
 		println("initialized: " + router);
+		println("static path: " + static);
 	}
 
 	def doFilter(request: ServletRequest, response: ServletResponse, chain: FilterChain) = {
-		println("doFilter")
 		(request, response) match {
 			case (req: HttpServletRequest, res: HttpServletResponse) =>
 				val path    = req.getRequestURI
 				val statics = static
 				path match {
 					case statics() =>
-						println("static")
 						chain.doFilter(request, response)
 					case _ =>
 						router.dispatch(req, res)
