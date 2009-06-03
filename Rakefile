@@ -18,6 +18,7 @@ CLEAN.include [%w[war/WEB-INF/lib/* war/WEB-INF/classes]]
 @classpath << SCALA_HOME + "lib/scala-compiler.jar"
 @classpath << Pathname.glob("#{ENV['HOME']}/lib/java/**/*.jar")
 @classpath << Pathname.glob(GAE_SDK + "lib/**/*.jar")
+@classpath << Pathname.glob("lib/*.jar")
 @classpath.flatten!
 puts @classpath
 ENV['CLASSPATH'] = @classpath.join(":")
