@@ -9,8 +9,8 @@ class HttpRequestDispatcher extends Filter {
 
 	def init (filterConfig: FilterConfig) = {
 		println("initializing...")
-		val applicationName = filterConfig.getInitParameter("application");
-		val klass  = Class.forName(applicationName)
+		val routerName = filterConfig.getInitParameter("router");
+		val klass  = Class.forName(routerName)
 
 		static = filterConfig.getInitParameter("static").r
 		router = klass.newInstance.asInstanceOf[HttpRouter];

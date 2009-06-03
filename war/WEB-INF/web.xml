@@ -8,8 +8,8 @@
 		<filter-name>HttpRequestDispatcher</filter-name>
 		<filter-class>net.lowreal.skirts.HttpRequestDispatcher</filter-class>
 		<init-param>
-			<param-name>application</param-name>
-			<param-value>net.lowreal.hookhub.Application</param-value>
+			<param-name>router</param-name>
+			<param-value>net.lowreal.hookhub.AppHttpRouter</param-value>
 		</init-param>
 		<init-param>
 			<param-name>static</param-name>
