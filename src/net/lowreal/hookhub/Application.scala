@@ -1,16 +1,20 @@
 package net.lowreal.hookhub
 
-import net.lowreal.skirts._
 import javax.servlet.http.{HttpServlet, HttpServletResponse, HttpServletRequest}
+import scala.collection.jcl.Conversions._
 
 import com.google.appengine.api.users.{User, UserService, UserServiceFactory}
 import com.google.appengine.api.datastore._
+
+import net.lowreal.skirts._
 
 class AppHttpRouter extends HttpRouter {
 	val top   = "/".r
 	val login = "/login".r
 	val user  = "/([A-Za-z][A-Za-z0-9_-]{1,30})/".r
 	val user0 = "/([A-Za-z][A-Za-z0-9_-]{1,30})".r
+
+	val DS    = DatastoreServiceFactory.getDatastoreService
 
 	override def dispatch (req: HttpServletRequest, res: HttpServletResponse):Unit = (req.getMethod, req.getRequestURI) match {
 		case ("GET", top()) => {
@@ -48,6 +52,21 @@ class AppHttpRouter extends HttpRouter {
 
 		case ("GET", login()) => {
 			println("login")
+			val user = new Entity("User")
+			user.setProperty("type", "debug")
+			user.setProperty("name", "cho45")
+
+			val query = new Query("User").addFilter("name", Query.FilterOperator.EQUAL, "cho45")
+
+			val rs = DS.prepare(query).asList(FetchOptions.Builder.withLimit(1))
+			println(rs.first)
+
+//			val key = DS.put(user)
+//
+//			println(user)
+//			println(key)
+//
+//			println(DS.get(key))
 		}
 
 		case (_, user0(name)) => {
@@ -56,6 +75,13 @@ class AppHttpRouter extends HttpRouter {
 
 		case (_, user(name)) => {
 			println("user page:" + name)
+
+			val query = new Query("User").addFilter("name", Query.FilterOperator.EQUAL, name)
+			if (query.first == null) {
+				// 404
+			} else {
+				//...
+			}
 		}
 
 		case _ => {
