@@ -7,4 +7,3 @@ import scala.collection.jcl.Conversions._
 abstract class HttpRouter {
 	def dispatch (req: HttpServletRequest, res: HttpServletResponse):Unit
 }
-

@@ -3,14 +3,17 @@ package net.lowreal.hookhub
 import net.lowreal.skirts._
 import javax.servlet.http.{HttpServlet, HttpServletResponse, HttpServletRequest}
 
-class AppHttpRouter extends HttpRouter {
+import com.google.appengine.api.users.{User, UserService, UserServiceFactory}
+import com.google.appengine.api.datastore._
 
+class AppHttpRouter extends HttpRouter {
 	val top   = "/".r
+	val login = "/login".r
 	val user  = "/([A-Za-z][A-Za-z0-9_-]{1,30})/".r
 	val user0 = "/([A-Za-z][A-Za-z0-9_-]{1,30})".r
 
-	override def dispatch (req: HttpServletRequest, res: HttpServletResponse):Unit = req.getRequestURI match {
-		case top() if req.getMethod == "GET" => {
+	override def dispatch (req: HttpServletRequest, res: HttpServletResponse):Unit = (req.getMethod, req.getRequestURI) match {
+		case ("GET", top()) => {
 			println("get")
 			val source = req.getParameter("source")
 			val result = Rhino.js(source)
@@ -39,15 +42,19 @@ class AppHttpRouter extends HttpRouter {
 			}
 		}
 
-		case top() if req.getMethod == "POST" => {
+		case ("POST", top()) => {
 			println("post")
 		}
 
-		case user0(name) => {
+		case ("GET", login()) => {
+			println("login")
+		}
+
+		case (_, user0(name)) => {
 			res.sendRedirect("/" + name + "/")
 		}
 
-		case user(name) => {
+		case (_, user(name)) => {
 			println("user page:" + name)
 		}
 
