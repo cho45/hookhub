@@ -3,10 +3,41 @@ package net.lowreal.hookhub
 import javax.servlet.http.{HttpServlet, HttpServletResponse, HttpServletRequest}
 import scala.collection.jcl.Conversions._
 
-import com.google.appengine.api.users.{User, UserService, UserServiceFactory}
 import com.google.appengine.api.datastore._
 
 import net.lowreal.skirts._
+import com.google.appengine.api.users.{User, UserService, UserServiceFactory}
+
+class DS [T <: DS[T]] (val entity: Entity) {
+	// class method
+	def create (args: (Symbol, Any)*) = {
+		val ent = new Entity(this.getClass.getName)
+		val con = this.getClass.getConstructor(classOf[Entity])
+		val ret = con.newInstance(ent).asInstanceOf[T]
+
+		for ( (key, value) <- args) {
+			ret(key) = value
+		}
+
+		println(ent)
+
+		ret
+	}
+
+	// instance method
+	def update (key:Symbol, value:Any):Unit = {
+		println(key, value)
+	}
+}
+
+class Session (e: Entity) extends DS[Session](e) {
+	def updateSession ():String = {
+		"......."
+	}
+}
+
+object Session extends Session(null)
+
 
 class AppHttpRouter extends HttpRouter {
 	val top   = "/".r
@@ -15,6 +46,7 @@ class AppHttpRouter extends HttpRouter {
 	val user0 = "/([A-Za-z][A-Za-z0-9_-]{1,30})".r
 
 	val DS    = DatastoreServiceFactory.getDatastoreService
+	val US    = UserServiceFactory.getUserService
 
 	override def dispatch (req: HttpServletRequest, res: HttpServletResponse):Unit = (req.getMethod, req.getRequestURI) match {
 		case ("GET", top()) => {
@@ -52,14 +84,17 @@ class AppHttpRouter extends HttpRouter {
 
 		case ("GET", login()) => {
 			println("login")
-			val user = new Entity("User")
-			user.setProperty("type", "debug")
-			user.setProperty("name", "cho45")
+			val session = Session.create('name -> "cho45", 'session_key -> "000")
+			println(session)
 
-			val query = new Query("User").addFilter("name", Query.FilterOperator.EQUAL, "cho45")
-
-			val rs = DS.prepare(query).asList(FetchOptions.Builder.withLimit(1))
-			println(rs.first)
+//			val user = new Entity("User")
+//			user.setProperty("type", "debug")
+//			user.setProperty("name", "cho45")
+//
+//			val query = new Query("User").addFilter("name", Query.FilterOperator.EQUAL, "cho45")
+//
+//			val rs = DS.prepare(query).asList(FetchOptions.Builder.withLimit(1))
+//			println(rs.first)
 
 //			val key = DS.put(user)
 //
@@ -76,12 +111,12 @@ class AppHttpRouter extends HttpRouter {
 		case (_, user(name)) => {
 			println("user page:" + name)
 
-			val query = new Query("User").addFilter("name", Query.FilterOperator.EQUAL, name)
-			if (query.first == null) {
-				// 404
-			} else {
-				//...
-			}
+//			val query = new Query("User").addFilter("name", Query.FilterOperator.EQUAL, name)
+//			if (query.first == null) {
+//				// 404
+//			} else {
+//				//...
+//			}
 		}
 
 		case _ => {
