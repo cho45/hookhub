@@ -15,13 +15,14 @@ object Rhino {
 
 		// Java のクラスを一切エクスポートしない
 		ctx.setClassShutter(new ClassShutter() {
-			def visibleToScripts(fullClassName: String) = false;
+			def visibleToScripts(fullClassName: String) = false
 		})
 	//	ctx.setSecurityController(new SecurityController() {
 	//	})
 
 		try {
 			val scope = ctx.initStandardObjects()
+
 			ctx.evaluateString(
 				scope,
 				"""

@@ -5,8 +5,12 @@ import javax.servlet.http.{HttpServlet, HttpServletResponse, HttpServletRequest}
 
 class AppHttpRouter extends HttpRouter {
 
-	override def dispatch (req: HttpServletRequest, res: HttpServletResponse):Unit = req match {
-		case GET("/") => {
+	val top   = "/".r
+	val user  = "/([A-Za-z][A-Za-z0-9_-]{1,30})/".r
+	val user0 = "/([A-Za-z][A-Za-z0-9_-]{1,30})".r
+
+	override def dispatch (req: HttpServletRequest, res: HttpServletResponse):Unit = req.getRequestURI match {
+		case top() if req.getMethod == "GET" => {
 			println("get")
 			val source = req.getParameter("source")
 			val result = Rhino.js(source)
@@ -15,20 +19,36 @@ class AppHttpRouter extends HttpRouter {
 			res.getWriter.println { """<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">""" }
 			res.getWriter.println {
 				<html>
-					<head><title>404</title></head>
+					<head><title>eval</title></head>
 
 					<link rel="stylesheet" type="text/css" href="/css/base.css" media="screen,tv"/>
 					<!-- script type="text/javascript" src="/js/site-script.js"></script -->
 				<body>
 					<h1>Request</h1>
 					<pre>result { result }</pre>
+					<form action="" method="GET">
+						<p>
+							<textarea name="source" cols="200" rows="20">{ source }</textarea>
+						</p>
+						<p>
+							<input type="submit" value="eval" />
+						</p>
+					</form>
 				</body>
 				</html>
 			}
 		}
 
-		case POST("/") => {
+		case top() if req.getMethod == "POST" => {
 			println("post")
+		}
+
+		case user0(name) => {
+			res.sendRedirect("/" + name + "/")
+		}
+
+		case user(name) => {
+			println("user page:" + name)
 		}
 
 		case _ => {
