@@ -10,7 +10,14 @@ abstract class HttpRouter {
 		val req = new Request(req0)
 		val res = new Response(res0)
 		val ctx = new Context(req, res)
-		route(ctx)
+		try {
+			route(ctx)
+		} catch {
+			case e:Redirect => {
+				res.code(302)
+				res.header("Location", e.getMessage)
+			}
+		}
 	}
 
 	def route (c:Context):Unit
@@ -18,6 +25,8 @@ abstract class HttpRouter {
 
 class Context (val req:Request, val res:Response) {
 }
+
+class Redirect (m:String) extends Exception(m)
 
 class Request (req0:HttpServletRequest)  {
 	def method () = req0.getMethod
@@ -33,6 +42,8 @@ class Request (req0:HttpServletRequest)  {
 	}
 	def requestURI () = req0.getRequestURI
 	def requestURL () = req0.getRequestURL
+
+	def query () = req0.getQueryString
 
 	def session (create:Boolean) = req0.getSession(create)
 	def session ()               = req0.getSession(true)

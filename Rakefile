@@ -8,7 +8,7 @@ require "fileutils"
 include FileUtils::Verbose
 
 SCALA      = Pathname(`which scala`.chomp)
-SCALA_HOME = SCALA + "../../share/scala"
+SCALA_HOME = SCALA + "../../"
 GAE_SDK    = Pathname.glob("#{ENV['HOME']}/sdk/appengine-java-sdk-*")[0]
 
 CLEAN.include [%w[war/WEB-INF/lib/* war/WEB-INF/classes]]

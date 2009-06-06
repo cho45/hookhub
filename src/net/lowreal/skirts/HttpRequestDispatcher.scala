@@ -5,6 +5,7 @@ import javax.servlet.http.{HttpServlet, HttpServletResponse, HttpServletRequest}
 
 class HttpRequestDispatcher extends Filter {
 	var static = """^/(?:css|js|images|static).*""".r
+	val through = """^/_.*""".r
 	var router:HttpRouter = null
 
 	def init (filterConfig: FilterConfig) = {
@@ -26,6 +27,8 @@ class HttpRequestDispatcher extends Filter {
 				val statics = static
 				path match {
 					case statics() =>
+						chain.doFilter(request, response)
+					case through() =>
 						chain.doFilter(request, response)
 					case _ =>
 						router.dispatch(req, res)

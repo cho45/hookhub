@@ -12,14 +12,21 @@ class AppHttpRouter extends HttpRouter {
 	val user  = "/([A-Za-z][A-Za-z0-9_-]{1,30})/".r
 	val user0 = "/([A-Za-z][A-Za-z0-9_-]{1,30})".r
 
+	val user_config  = "/([A-Za-z][A-Za-z0-9_-]{1,30})/config".r
+
 	val US    = UserServiceFactory.getUserService
 
 	class MyContext (c:Context) {
 		def requireUser () = {
 			val user = US.getCurrentUser
 			if (user == null) {
-				throw new RedirectException(US.createLoginURL())
+				throw new Redirect(US.createLoginURL(c.req.requestURI))
 			}
+		}
+
+		def user () = {
+			val user = US.getCurrentUser
+			Session.find('mail -> user.getEmail)
 		}
 	}
 
@@ -32,6 +39,10 @@ class AppHttpRouter extends HttpRouter {
 			c.res.header("Content-Type", "text/plain")
 			c.res.content("Test")
 
+			c.requireUser
+		}
+
+		case ("GET", user_config(user)) => {
 			c.requireUser
 		}
 
@@ -87,26 +98,27 @@ class AppHttpRouter extends HttpRouter {
 ////			}
 //		}
 //
-//		case _ => {
-//			println("404")
-//			res.setContentType("text/html")
-//			res.getWriter.println { """<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">""" }
-//			res.getWriter.println {
-//				<html>
-//					<head><title>404</title></head>
-//
-//					<link rel="stylesheet" type="text/css" href="/css/base.css" media="screen,tv"/>
-//					<!-- script type="text/javascript" src="/js/site-script.js"></script -->
-//				<body>
-//					<h1>Request</h1>
-//					<pre>Method: { req.getMethod }</pre>
-//					<pre>RequestURI: { req.getRequestURI }</pre>
-//					<pre>QueryString: { req.getQueryString }</pre>
-//					<h1>Raw</h1>
-//					<pre>{ req }</pre>
-//				</body>
-//				</html>
-//			}
+		case _ => {
+			println("404")
+			c.res.header("Content-Type", "text/html")
+			c.res.content { """<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">""" }
+			c.res.content {
+				<html>
+					<head><title>404</title></head>
+
+					<link rel="stylesheet" type="text/css" href="/css/base.css" media="screen,tv"/>
+					<!-- script type="text/javascript" src="/js/site-script.js"></script -->
+				<body>
+					<h1>Request</h1>
+					<pre>Method: { c.req.method }</pre>
+					<pre>RequestURI: { c.req.requestURI }</pre>
+					<pre>QueryString: { c.req.query }</pre>
+					<h1>Raw</h1>
+					<pre>{ c.req }</pre>
+				</body>
+				</html>.toString()
+			}
+		}
 	}
 
 }
