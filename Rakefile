@@ -11,7 +11,7 @@ SCALA      = Pathname(`which scala`.chomp)
 SCALA_HOME = SCALA + "../../"
 GAE_SDK    = Pathname.glob("#{ENV['HOME']}/sdk/appengine-java-sdk-*")[0]
 
-CLEAN.include [%w[war/WEB-INF/lib/* war/WEB-INF/classes]]
+CLEAN.include [%w[war/WEB-INF/lib/* war/WEB-INF/classes .buildtime]]
 
 @classpath  = (ENV['CLASSPATH'] || "").split(':')
 @classpath << SCALA_HOME + "lib/scala-library.jar"
@@ -31,8 +31,6 @@ end
 
 def scalac(*args)
 	sh "scalac", *args
-rescue => e
-	puts e
 end
 
 task :default => :run
@@ -41,7 +39,18 @@ task :run => [:build] do
 	sh GAE_SDK + "bin/dev_appserver.sh", "war"
 end
 
-task :build => [:copylibs, "war/WEB-INF/classes"] + src('.class', 'war/WEB-INF/classes/')
+task :build => [:copylibs, :build_all]
+
+task :build_all => ["war/WEB-INF/classes"] do
+	buildtime = File.mtime(".buildtime").to_i rescue 0
+	srcs = src(".scala", "src/").select {|f|
+		File.mtime(f).to_i > buildtime
+	}
+	unless srcs.empty?
+		scalac "-d", "war/WEB-INF/classes", *srcs
+		touch ".buildtime"
+	end
+end
 
 task :copylibs do
 	dest = Pathname("war/WEB-INF/lib")
@@ -64,9 +73,4 @@ file "war/WEB-INF/classes" do |t|
 	cp_r "src", classes
 end
 
-src.each do |s|
-	file "war/WEB-INF/classes/#{s}.class" => "src/#{s}.scala" do |t|
-		scalac "-d", "war/WEB-INF/classes", "src/#{s}.scala"
-	end
-end
 
