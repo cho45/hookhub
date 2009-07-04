@@ -29,6 +29,7 @@ class Context (val req:Request, val res:Response) {
 class RequestException (val code:Int) extends Exception("RequestException " + code)
 class Redirect (val url:String) extends RequestException(302)
 class NotFound () extends RequestException(404)
+class Success  () extends RequestException(200)
 
 trait HttpRouter {
 	class Route (val regexp:Regex, val source:String, val capture:Array[String], val handler:(Context => Unit)) extends Throwable
@@ -45,7 +46,7 @@ trait HttpRouter {
 				val t = m.group(1)
 				val n = m.group(2)
 				capture += n
-				"(" + ( regdefs.getOrElse(m.toString, if (t == "*") ".*" else "[^/]+" ) ) + ")"
+				"(" + ( regdefs.getOrElse(m.group(0), if (t == "*") ".*" else "[^/]+" ) ) + ")"
 			}
 		) + "$").r
 
@@ -69,7 +70,10 @@ trait HttpRouter {
 					for ( (key, value) <- r.capture.zip(capture.subgroups.toArray)) {
 						req.param(key) = value
 					}
-					throw r
+					res.code(200)
+					res.header("Context-Type", "text/plain")
+					r.handler(ctx)
+					throw new Success
 				}
 			}
 			throw new NotFound();
@@ -78,11 +82,7 @@ trait HttpRouter {
 				res.code(302)
 				res.header("Location", e.url)
 			}
-			case r:Route => {
-				res.code(200)
-				res.header("Context-Type", "text/plain")
-				r.handler(ctx)
-			}
+			case r:Success => {}
 		}
 	}
 }

@@ -19,7 +19,7 @@ class AppHttpRouter extends HttpRouter {
 
 		def user () = {
 			val user = US.getCurrentUser
-			Session.find('mail -> user.getEmail)
+			Session.instantiate('mail -> user.getEmail)
 		}
 	}
 
@@ -31,16 +31,17 @@ class AppHttpRouter extends HttpRouter {
 		_.res.content("hello")
 	}
 
+	route("/my") { c => 
+		c.requireUser
+		c.res.content("you are " + c.user.apply('mail))
+	}
+
 	route("/:user") { c => 
 		c.res.redirect("/" + c.req.param("user") + "/")
 	}
 
 	route("/:user/") { c => 
 		c.res.content("this is " + c.req.param("user") + "'s page")
-	}
-
-	route("/:user/config") {
-		_.requireUser
 	}
 
 //	override def route (c:Context):Unit = (c.req.method, c.req.requestURI) match {

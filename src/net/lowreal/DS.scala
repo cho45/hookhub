@@ -28,17 +28,23 @@ class DS [T <: DS[T]] () {
 		for ( (key, value) <- args) {
 			query.addFilter(key.name, Query.FilterOperator.EQUAL, value)
 		}
-		datastore.prepare(query).asIterator.asInstanceOf[Iterator[Entity]].map[T] {
-			this.getClass.newInstance.asInstanceOf[T].setEntity(_)
+		val i = datastore.prepare(query).asIterator
+		val self = this
+		new Iterator[T] {
+			def hasNext: Boolean = i.hasNext
+			def next   : T       = self.getClass.newInstance.asInstanceOf[T].setEntity(i.next)
 		}
 	}
 
-	def find (args: (Symbol, Any)*):T = select(args:_*).next
+	def find (args: (Symbol, Any)*):Option[T] = {
+		val ret = select(args:_*)
+		if (ret.hasNext) Some(ret.next) else None
+	}
 
 	// find or create with first value
 	def instantiate (arg: (Symbol, Any)) = find(arg) match {
-		case null    => create(arg)
-		case ret @ _ => ret
+		case None      => create(arg)
+		case Some(ret) => ret
 	}
 
 	// instance method
