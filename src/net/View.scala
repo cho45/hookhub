@@ -4,7 +4,7 @@ package net.lowreal.hookhub
 import org.mozilla.javascript._
 class RhinoView[T <: net.lowreal.skirts.Context] {
 	def apply(name:String, context:T) = {
-		context.res.header("Content-Type", "text/html")
+		context.res.header("Content-Type", "text/html; charset=utf-8")
 		context.res.content(render(name, context))
 	}
 

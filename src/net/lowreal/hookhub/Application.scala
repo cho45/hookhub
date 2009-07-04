@@ -5,11 +5,12 @@ import scala.collection.jcl.Conversions._
 
 import net.lowreal.skirts._
 import com.google.appengine.api.users.{User, UserService, UserServiceFactory}
+import java.util.Date
 
 class AppHttpRouter extends HttpRouter {
 	val US    = UserServiceFactory.getUserService
 	implicit def ctx2myctx (c:Context) = new MyContext(c)
-	class MyContext (c:Context) extends Context(c.req, c.res) with Proxy {
+	class MyContext (c:Context) extends Context(c.req, c.res, c.stash) with Proxy {
 		def self = c
 
 		def loginURL ():String = {
@@ -73,6 +74,17 @@ class AppHttpRouter extends HttpRouter {
 	}
 
 	route("/:user/") { c => 
+		c.req.method match {
+			case "POST" => {
+				val code = c.req.param("code")
+				println(code)
+				val hook = Hook.create('user -> c.user.getEmail, 'code -> code, 'lasterror -> "", 'created -> new Date())
+				hook.save
+			}
+			case _ => { }
+		}
+
+		c.stash("hooks") = Hook.select('user -> c.user.getEmail).toList
 		c.view("user")
 	}
 

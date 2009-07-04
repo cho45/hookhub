@@ -53,6 +53,8 @@ class DS [T <: DS[T]] () {
 		this.asInstanceOf[T]
 	}
 
+	def key = entity.getKey
+
 	def update (key:Symbol, value:Any):Unit = {
 		entity.setProperty(key.name, value)
 	}
@@ -61,7 +63,12 @@ class DS [T <: DS[T]] () {
 		entity.getProperty(key.name)
 	}
 
-	def save ():Unit = {
+	def param(key:String):Any = {
+		apply(Symbol(key))
+	}
+
+	def save ():T = {
 		datastore.put(entity)
+		this.asInstanceOf[T]
 	}
 }

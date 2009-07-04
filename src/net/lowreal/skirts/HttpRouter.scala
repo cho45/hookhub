@@ -7,6 +7,8 @@ import scala.collection.mutable.{HashMap, ArrayBuffer}
 import scala.util.matching.Regex
 import scala.util.matching.Regex.Match
 
+import scala.collection.jcl._
+
 import java.util.regex.Matcher
 class MyString (s:String) {
 	def replace (source:String, replace:(Matcher => String)) = {
@@ -22,7 +24,7 @@ class MyString (s:String) {
 
 
 import java.io._
-class Context (val req:Request, val res:Response) {
+class Context (val req:Request, val res:Response, val stash:HashMap[String, Any] ) {
 	def redispatch (path:String) {
 	}
 
@@ -74,7 +76,7 @@ trait HttpRouter {
 	def dispatch (req0: HttpServletRequest, res0: HttpServletResponse):Unit = {
 		val req = new Request(req0)
 		val res = new Response(res0)
-		val ctx = new Context(req, res)
+		val ctx = new Context(req, res, new HashMap)
 
 		try {
 			for (r <- routing) {
@@ -102,6 +104,8 @@ trait HttpRouter {
 }
 
 class Request (req0:HttpServletRequest)  {
+	req0.setCharacterEncoding("UTF-8")
+
 	def method () = req0.getMethod
 	def cookie () = req0.getCookies
 	def header () = {
@@ -124,6 +128,9 @@ class Request (req0:HttpServletRequest)  {
 	def sessionId ()             = req0.getRequestedSessionId
 
 	val param = new HashMap[String, String]
+	for ( (key, value) <- Map(req0.getParameterMap.asInstanceOf[java.util.Map[String, Array[String]]])) {
+		param(key) = value.first
+	}
 }
 
 class Response (res0:HttpServletResponse){
