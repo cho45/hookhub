@@ -1,15 +1,9 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-	<head>
-		<title>lab.lowreal.net</title>
-	</head>
-	<body>
-		<h1>test</h1>
-		<% if (c.user()) { %>
-			hello <%= c.user().getEmail() %>
-			<a href="<%= c.logoutURL() %>">logout</a>
-		<% } else { %>
-			<a href="<%= c.loginURL() %>">login</a>
-		<% } %>
-	</body>
-</html>
+<%=== v.render('_header', c) %>
+	<h1>test</h1>
+	<% if (c.user()) { %>
+		hello <%= c.user().getEmail() %>
+		<a href="<%= c.logoutURL() %>">logout</a>
+	<% } else { %>
+		<a href="<%= c.loginURL() %>">login</a>
+	<% } %>
+<%=== v.render('_footer', c) %>
