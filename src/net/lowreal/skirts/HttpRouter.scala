@@ -21,8 +21,22 @@ class MyString (s:String) {
 }
 
 
+import java.io._
 class Context (val req:Request, val res:Response) {
 	def redispatch (path:String) {
+	}
+
+	def file (path:String) = {
+		val file = new File(path)
+		val fis  = new FileInputStream(file)
+		val isr  = new InputStreamReader(fis, "UTF-8")
+		val br   = new BufferedReader(isr)
+		val sb   = new StringBuffer(32)
+		while (br.ready) {
+			sb.append(br.readLine)
+			sb.append("\n")
+		}
+		sb.toString
 	}
 }
 

@@ -5,6 +5,11 @@
 	</head>
 	<body>
 		<h1>test</h1>
-		<a href="/hello">hello</a>
+		<% if (c.user()) { %>
+			hello <%= c.user().getEmail() %>
+			<a href="<%= c.logoutURL() %>">logout</a>
+		<% } else { %>
+			<a href="<%= c.loginURL() %>">login</a>
+		<% } %>
 	</body>
 </html>

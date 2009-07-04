@@ -8,13 +8,22 @@ import com.google.appengine.api.users.{User, UserService, UserServiceFactory}
 
 class AppHttpRouter extends HttpRouter {
 	val US    = UserServiceFactory.getUserService
-
 	implicit def ctx2myctx (c:Context) = new MyContext(c)
-	class MyContext (c:Context) {
+	class MyContext (c:Context) extends Context(c.req, c.res) with Proxy {
+		def self = c
+
+		def loginURL ():String = {
+			US.createLoginURL(c.req.requestURI)
+		}
+
+		def logoutURL ():String = {
+			US.createLogoutURL(c.req.requestURI)
+		}
+
 		def requireUser () = {
 			val user = US.getCurrentUser
 			if (user == null) {
-				throw new Redirect(US.createLoginURL(c.req.requestURI))
+				throw new Redirect(loginURL)
 			}
 		}
 
@@ -27,10 +36,15 @@ class AppHttpRouter extends HttpRouter {
 		def user () = {
 			US.getCurrentUser
 		}
+		
+		val rhino = new RhinoView[MyContext]
+		def view (name:String) = {
+			rhino(name, this)
+		}
 	}
 
-	route("/") {
-		_.res.content("hello")
+	route("/") { c =>
+		c.view("index")
 	}
 
 	route("/register") { c =>
