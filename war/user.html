@@ -1,0 +1,8 @@
+<%=== v.render('_header', c) %>
+<h2>
+	Hooks
+	<% if (c.userIsAuthor) { %>
+	<a href="/<%= c.user().getEmail() %>/edit">Edit</a>
+	<% } %>
+</h2>
+<%=== v.render('_footer', c) %>

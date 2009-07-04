@@ -1,9 +1,3 @@
 <%=== v.render('_header', c) %>
-	<h1>test</h1>
-	<% if (c.user()) { %>
-		hello <%= c.user().getEmail() %>
-		<a href="<%= c.logoutURL() %>">logout</a>
-	<% } else { %>
-		<a href="<%= c.loginURL() %>">login</a>
-	<% } %>
+<h2>index</h2>
 <%=== v.render('_footer', c) %>

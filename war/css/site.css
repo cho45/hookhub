@@ -1,0 +1,26 @@
+
+body {
+	background: #fff;
+}
+
+#whole {
+	width: 80%;
+	padding: 2em;
+	margin: auto;
+	background: #efefef;
+	border: 1px solid #ccc;
+	position: relative;
+}
+
+#navigation {
+	position: absolute;
+	top: 0;
+	right: 0;
+	padding: 1em;
+	font-size: 80%;
+}
+
+#footer {
+	font-size: 80%;
+	margin: 10em 0 0 0;
+}

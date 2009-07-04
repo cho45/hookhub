@@ -28,9 +28,13 @@ class AppHttpRouter extends HttpRouter {
 		}
 
 		def requireUserIsAuthor () = {
-			if (c.user.getEmail != c.req.param("user")) {
+			if (!userIsAuthor) {
 				throw new Redirect("/")
 			}
+		}
+
+		def userIsAuthor () = {
+			c.user.getEmail == c.req.param("user")
 		}
 
 		def user () = {
@@ -47,20 +51,20 @@ class AppHttpRouter extends HttpRouter {
 		c.view("index")
 	}
 
-	route("/register") { c =>
-		c.req.method match {
-			case "POST" => {
-				c.res.content("post");
-			}
-			case _ => {
-				c.res.content("get");
-			}
-		}
-	}
+//	route("/register") { c =>
+//		c.req.method match {
+//			case "POST" => {
+//				c.res.content("post");
+//			}
+//			case _ => {
+//				c.res.content("get");
+//			}
+//		}
+//	}
 
 	route("/my") { c => 
 		c.requireUser
-		c.res.content("you are " + c.user.getNickname)
+		c.res.redirect("/" + c.user.getEmail + "/")
 	}
 
 
@@ -69,13 +73,11 @@ class AppHttpRouter extends HttpRouter {
 	}
 
 	route("/:user/") { c => 
-		c.res.content("this is " + c.req.param("user") + "'s page")
-	}
-
-	route("/:user/hooks") { c => 
+		c.view("user")
 	}
 
 	route("/:user/config") { c => 
 		c.requireUserIsAuthor
+		c.view("user/config")
 	}
 }
