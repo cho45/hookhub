@@ -8,3 +8,11 @@ class Session () extends DS[Session]() {
 }
 object Session extends Session()
 
+
+class Hook extends DS[Hook]() {
+}
+object Hook extends Hook()
+
+class Config extends DS[Config]() {
+}
+object Config extends Config()

@@ -9,6 +9,7 @@ import com.google.appengine.api.users.{User, UserService, UserServiceFactory}
 class AppHttpRouter extends HttpRouter {
 	val US    = UserServiceFactory.getUserService
 
+	implicit def ctx2myctx (c:Context) = new MyContext(c)
 	class MyContext (c:Context) {
 		def requireUser () = {
 			val user = US.getCurrentUser
@@ -17,24 +18,37 @@ class AppHttpRouter extends HttpRouter {
 			}
 		}
 
+		def requireUserIsAuthor () = {
+			if (c.user.getEmail != c.req.param("user")) {
+				throw new Redirect("/")
+			}
+		}
+
 		def user () = {
-			val user = US.getCurrentUser
-			Session.instantiate('mail -> user.getEmail)
+			US.getCurrentUser
 		}
 	}
-
-	implicit def ctx2myctx (c:Context) = new MyContext(c)
-
-	this reg ":user" -> "([A-Za-z][A-Za-z0-9_-]{2,30})"
 
 	route("/") {
 		_.res.content("hello")
 	}
 
+	route("/register") { c =>
+		c.req.method match {
+			case "POST" => {
+				c.res.content("post");
+			}
+			case _ => {
+				c.res.content("get");
+			}
+		}
+	}
+
 	route("/my") { c => 
 		c.requireUser
-		c.res.content("you are " + c.user.apply('mail))
+		c.res.content("you are " + c.user.getNickname)
 	}
+
 
 	route("/:user") { c => 
 		c.res.redirect("/" + c.req.param("user") + "/")
@@ -42,5 +56,12 @@ class AppHttpRouter extends HttpRouter {
 
 	route("/:user/") { c => 
 		c.res.content("this is " + c.req.param("user") + "'s page")
+	}
+
+	route("/:user/hooks") { c => 
+	}
+
+	route("/:user/config") { c => 
+		c.requireUserIsAuthor
 	}
 }
