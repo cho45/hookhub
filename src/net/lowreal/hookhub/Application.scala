@@ -27,9 +27,21 @@ class AppHttpRouter extends HttpRouter {
 
 	this reg ":user" -> "([A-Za-z][A-Za-z0-9_-]{2,30})"
 
-	this route "/" -> { c => {
-		c.res.content("hello")
-	} }
+	route("/") {
+		_.res.content("hello")
+	}
+
+	route("/:user") { c => 
+		c.res.redirect("/" + c.req.param("user") + "/")
+	}
+
+	route("/:user/") { c => 
+		c.res.content("this is " + c.req.param("user") + "'s page")
+	}
+
+	route("/:user/config") {
+		_.requireUser
+	}
 
 //	override def route (c:Context):Unit = (c.req.method, c.req.requestURI) match {
 //		case ("GET", top()) => {

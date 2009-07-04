@@ -38,9 +38,7 @@ trait HttpRouter {
 
 	implicit def str2mystr (s:String) = new MyString(s)
 
-	def route (o:(String, Context => Unit)) = {
-		val source  = o._1
-		val handler = o._2
+	def route (source:String)(handler:Context => Unit) = {
 		val capture = new ArrayBuffer[String]
 		val regexp  = ("^" + source.replace("""([:*])(\w+)""",
 			(m:Matcher) => {
