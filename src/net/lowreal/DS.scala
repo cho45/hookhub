@@ -41,6 +41,15 @@ class DS [T <: DS[T]] () {
 		if (ret.hasNext) Some(ret.next) else None
 	}
 
+	def find (id:Int):Option[T] = {
+		val key = KeyFactory.createKey(entityName, id)
+		try {
+			Some(this.getClass.newInstance.asInstanceOf[T].setEntity(datastore.get(key)))
+		} catch {
+			case _ => None
+		}
+	}
+
 	// find or create with first value
 	def instantiate (arg: (Symbol, Any)) = find(arg) match {
 		case None      => create(arg)
@@ -69,6 +78,11 @@ class DS [T <: DS[T]] () {
 
 	def save ():T = {
 		datastore.put(entity)
+		this.asInstanceOf[T]
+	}
+
+	def delete ():T = {
+		datastore.delete(entity.getKey)
 		this.asInstanceOf[T]
 	}
 }

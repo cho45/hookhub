@@ -74,6 +74,14 @@ class AppHttpRouter extends HttpRouter {
 	}
 
 	route("/:user/") { c => 
+//		if (c.req.param("delete") != null) {
+//			val id = c.req.param("delete").toInt
+//			Hook.find(id) match {
+//				case None    => {}
+//				case Some(h) => h.delete
+//			}
+//		}
+
 		c.req.method match {
 			case "POST" => {
 				val code = c.req.param("code")
