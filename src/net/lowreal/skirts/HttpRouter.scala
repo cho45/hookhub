@@ -3,30 +3,91 @@ package net.lowreal.skirts
 import javax.servlet._
 import javax.servlet.http.{HttpServlet, HttpServletResponse, HttpServletRequest}
 
-import scala.collection.mutable.HashMap
+import scala.collection.mutable.{HashMap, ArrayBuffer}
+import scala.util.matching.Regex
+import scala.util.matching.Regex.Match
 
-abstract class HttpRouter {
+import java.util.regex.Matcher
+class MyString (s:String) {
+	def replace (source:String, replace:(Matcher => String)) = {
+		val m = source.r.pattern.matcher(s)
+		val sb = new StringBuffer(32)
+		while (m.find) {
+			m.appendReplacement(sb, replace(m))
+		}
+		m.appendTail(sb)
+		sb.toString
+	}
+}
+
+
+class Context (val req:Request, val res:Response) {
+	def redispatch (path:String) {
+	}
+}
+
+class RequestException (val code:Int) extends Exception("RequestException " + code)
+class Redirect (val url:String) extends RequestException(302)
+class NotFound () extends RequestException(404)
+
+trait HttpRouter {
+	class Route (val regexp:Regex, val source:String, val capture:Array[String], val handler:(Context => Unit)) extends Throwable
+
+	val routing = new ArrayBuffer[Route]
+	val regdefs = new HashMap[String, String]
+
+	implicit def str2mystr (s:String) = new MyString(s)
+
+	def route (o:(String, Context => Unit)) = {
+		val source  = o._1
+		val handler = o._2
+		val capture = new ArrayBuffer[String]
+		val regexp  = ("^" + source.replace("""([:*])(\w+)""",
+			(m:Matcher) => {
+				val t = m.group(1)
+				val n = m.group(2)
+				capture += n
+				"(" + ( regdefs.getOrElse(m.toString, if (t == "*") ".*" else "[^/]+" ) ) + ")"
+			}
+		) + "$").r
+
+		routing += new Route(regexp, source, capture.toArray, handler);
+	}
+
+	def reg (o:(String, String)) = {
+		regdefs += o
+	}
+
 	def dispatch (req0: HttpServletRequest, res0: HttpServletResponse):Unit = {
 		val req = new Request(req0)
 		val res = new Response(res0)
 		val ctx = new Context(req, res)
+
 		try {
-			route(ctx)
+			for (r <- routing) {
+				val m = r.regexp.findFirstMatchIn(req.path)
+				if (m.isDefined) {
+					val capture:Match = m.get
+					for ( (key, value) <- r.capture.zip(capture.subgroups.toArray)) {
+						req.param(key) = value
+					}
+					throw r
+				}
+			}
+			throw new NotFound();
 		} catch {
 			case e:Redirect => {
 				res.code(302)
-				res.header("Location", e.getMessage)
+				res.header("Location", e.url)
+			}
+			case r:Route => {
+				res.code(200)
+				res.header("Context-Type", "text/plain")
+				r.handler(ctx)
 			}
 		}
 	}
-
-	def route (c:Context):Unit
 }
-
-class Context (val req:Request, val res:Response) {
-}
-
-class Redirect (m:String) extends Exception(m)
 
 class Request (req0:HttpServletRequest)  {
 	def method () = req0.getMethod
@@ -42,12 +103,15 @@ class Request (req0:HttpServletRequest)  {
 	}
 	def requestURI () = req0.getRequestURI
 	def requestURL () = req0.getRequestURL
+	def path = requestURI
 
 	def query () = req0.getQueryString
 
 	def session (create:Boolean) = req0.getSession(create)
 	def session ()               = req0.getSession(true)
 	def sessionId ()             = req0.getRequestedSessionId
+
+	val param = new HashMap[String, String]
 }
 
 class Response (res0:HttpServletResponse){
