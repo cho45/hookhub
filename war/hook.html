@@ -8,5 +8,5 @@
 </h2>
 <pre><%= hook.param('code') %></pre>
 <pre><%= hook.param('result') %></pre>
-<code><%= c.absolute("/hook/" + hook.param('token')) %></code>
+<input type="text" value="<%= c.absolute("/hook/" + hook.param('token')) %>" size="80" onfocus="this.select()"/>
 <%=== v.render('_footer', c) %>
