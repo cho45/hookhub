@@ -4,17 +4,16 @@ import com.google.appengine.api.datastore._
 import scala.collection.jcl.Conversions._
 
 class DS [T <: DS[T]] () {
-	var entity:Entity = null
+	def entityName = this.getClass.getName
+
+	var entity:Entity = new Entity(entityName)
 	val datastore = DatastoreServiceFactory.getDatastoreService
 
 	// def _entity_= (e:Entity) = entity = Entity
 
 	// class method
-	def entityName = this.getClass.getName
-
 	def create (args: (Symbol, Any)*) = {
-		val ent = new Entity(entityName)
-		val ret = this.getClass.newInstance.asInstanceOf[T].setEntity(ent)
+		val ret = this.getClass.newInstance.asInstanceOf[T]
 
 		for ( (key, value) <- args) {
 			ret(key) = value
@@ -29,6 +28,9 @@ class DS [T <: DS[T]] () {
 			(key, value) match {
 				case ('order, key:Symbol) => {
 					query.addSort(key.name)
+				}
+				case ('order, (key:Symbol, sort:Symbol)) => {
+					query.addSort(key.name, if (sort == 'desc) Query.SortDirection.DESCENDING else Query.SortDirection.ASCENDING )
 				}
 				case _ => {
 					query.addFilter(key.name, Query.FilterOperator.EQUAL, value)

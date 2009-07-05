@@ -83,27 +83,40 @@ class AppHttpRouter extends HttpRouter {
 			}
 		}
 
+		c.stash("hooks") = Hook.select('user -> c.req.param("user"), 'order -> ('created, 'desc)).toList
+		c.view("user")
+	}
+
+	route("/:user/hook/new") { c => 
 		c.req.method match {
 			case "POST" => {
-				val code = c.req.param("code")
-				println(code)
-				val hook = Hook.create('user -> c.user.getEmail, 'code -> code, 'lasterror -> "", 'created -> new Date())
+				val code  = c.req.param("code")
+				val title = c.req.param("title")
+				val hook  = Hook.create(
+					'user      -> c.user.getEmail,
+					'title     -> title,
+					'code      -> code,
+					'lasterror -> "",
+					'token     -> Hook.randomToken,
+					'created   -> new Date()
+				)
 				hook.save
+				c.redirect("/" + c.user.getEmail + "/hook/" + hook.key.getId)
 			}
 			case _ => { }
 		}
 
-		c.stash("hooks") = Hook.select('user -> c.req.param("user")).toList
-		c.view("user")
+		c.stash("hook") = new Hook;
+		c.view("hook.edit")
 	}
 
 	route("/:user/hook/:id") { c => 
-		c.stash("hook") = Hook.find(c.req.param("id").toInt)
+		c.stash("hook") = Hook.find(c.req.param("id").toInt).getOrElse(throw new NotFound)
 		c.view("hook")
 	}
 
 	route("/:user/hook/:id/edit") { c => 
-		c.stash("hook") = Hook.find(c.req.param("id").toInt)
+		c.stash("hook") = Hook.find(c.req.param("id").toInt).getOrElse(throw new NotFound)
 		c.view("hook.edit")
 	}
 

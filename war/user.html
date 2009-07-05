@@ -2,24 +2,16 @@
 <h2>
 	Hooks
 	<% if (c.userIsAuthor()) { %>
-		<a href="/<%= author  %>/edit">Edit</a>
-		<a href="/<%= author %>/config">Config</a>
+		<a href="/<%= author  %>/hook/new">new</a>
+		<a href="/<%= author %>/config">config</a>
 	<% } %>
 </h2>
 
-	<% hooks = c.stash().apply('hooks') %>
+	<% hooks = stash('hooks') %>
 	<% for (var i = 0; i < hooks.length(); i++) { var hook = hooks.apply(i) %>
 	<div>
 		<a href="/<%= author %>/hook/<%= hook.key().getId() %>"><%= hook.param('title') %></a>
 	</div>
 	<% } %>
 
-	<form action="" method="post">
-		<p>
-		<textarea name="code" cols="50" rows="20"></textarea>
-		</p>
-		<p>
-		<input type="submit" value="save"/>
-		</p>
-	</form>
 <%=== v.render('_footer', c) %>

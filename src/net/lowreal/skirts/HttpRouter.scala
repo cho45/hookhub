@@ -28,6 +28,10 @@ class Context (val req:Request, val res:Response, val stash:HashMap[String, Any]
 	def redispatch (path:String) {
 	}
 
+	def redirect (path:String) {
+		throw new Redirect(path)
+	}
+
 	def file (path:String) = {
 		val file = new File(path)
 		val fis  = new FileInputStream(file)

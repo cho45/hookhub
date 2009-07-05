@@ -9,7 +9,11 @@ class Session () extends DS[Session]() {
 object Session extends Session()
 
 
+import java.util.UUID
 class Hook extends DS[Hook]() {
+	def randomToken ():String = {
+		UUID.randomUUID().toString().replaceAll("-", "")
+	}
 }
 object Hook extends Hook()
 
