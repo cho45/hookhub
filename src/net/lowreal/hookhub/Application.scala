@@ -103,7 +103,9 @@ class AppHttpRouter extends HttpRouter {
 			case "POST" => {
 				val key    = c.req.param("key")
 				val value  = c.req.param("value")
-				Config.create('user -> c.user.getEmail, 'key -> key, 'value -> value, 'created -> new Date()).save
+				val config = Config.ensure('user -> c.user.getEmail, 'key -> key)
+				config.param('value -> value)
+				config.save
 			}
 			case _ => { }
 		}

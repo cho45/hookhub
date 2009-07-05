@@ -58,8 +58,8 @@ class DS [T <: DS[T]] () {
 	}
 
 	// find or create with first value
-	def instantiate (arg: (Symbol, Any)) = find(arg) match {
-		case None      => create(arg)
+	def ensure (args: (Symbol, Any)*) = find(args:_*) match {
+		case None      => create(args:_*)
 		case Some(ret) => ret
 	}
 
@@ -79,8 +79,15 @@ class DS [T <: DS[T]] () {
 		entity.getProperty(key.name)
 	}
 
-	def param(key:String):Any = {
+	def param (key:String):Any = {
 		apply(Symbol(key))
+	}
+
+	def param (args: (Symbol, Any)*):Any = {
+		for ( (key, value) <- args) {
+			update(key, value)
+		}
+		args
 	}
 
 	def save ():T = {
