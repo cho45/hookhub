@@ -32,6 +32,10 @@ class Context (val req:Request, val res:Response, val stash:HashMap[String, Any]
 		throw new Redirect(path)
 	}
 
+	def absolute (path:String):String = {
+		"http://localhost:8080" + path
+	}
+
 	def file (path:String) = {
 		val file = new File(path)
 		val fis  = new FileInputStream(file)
