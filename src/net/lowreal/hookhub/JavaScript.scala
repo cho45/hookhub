@@ -117,7 +117,6 @@ object HookRunner {
 			val result = ctx.evaluateString(scope, source, "<run>", 1, null)
 
 			ret =  Context.toString(result)
-			println(ret)
 		} finally {
 			Context.exit()
 		}

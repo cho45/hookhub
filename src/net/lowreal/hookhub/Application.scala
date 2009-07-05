@@ -86,20 +86,20 @@ class AppHttpRouter extends HttpRouter {
 		stash += "params" -> c.req.param
 		
 		try {
-			HookRunner.run(hook('code).asInstanceOf[String], stash, c.file("js/init.js"))
-			hook.param('lasterror -> "")
+			val res = HookRunner.run(hook('code).asInstanceOf[String], stash, c.file("js/init.js"))
+			hook.param('result -> res)
 			hook.save
 			c.res.code(200)
 			c.res.content("ok")
 		} catch {
 			case e:RhinoException => {
-				hook.param('lasterror -> e.details)
+				hook.param('result -> e.details)
 				hook.save
 				c.res.code(500)
 				c.res.content("error:" + e.details)
 			}
 			case e:TimeoutError => {
-				hook.param('lasterror -> "TimeoutError")
+				hook.param('result -> "TimeoutError")
 				hook.save
 				c.res.code(500)
 				c.res.content("timeout")
@@ -133,7 +133,7 @@ class AppHttpRouter extends HttpRouter {
 					'user      -> c.user.getEmail,
 					'title     -> title,
 					'code      -> code,
-					'lasterror -> "",
+					'result    -> "",
 					'token     -> Hook.randomToken,
 					'created   -> new Date()
 				)
