@@ -8,7 +8,7 @@ import net.lowreal.skirts._
 import com.google.appengine.api.users.{User, UserService, UserServiceFactory}
 import java.util.Date
 
-import org.mozilla.javascript.EcmaError
+import org.mozilla.javascript.RhinoException
 
 class AppHttpRouter extends HttpRouter {
 	val US    = UserServiceFactory.getUserService
@@ -92,11 +92,17 @@ class AppHttpRouter extends HttpRouter {
 			c.res.code(200)
 			c.res.content("ok")
 		} catch {
-			case e:EcmaError => {
+			case e:RhinoException => {
 				hook.param('lasterror -> e.details)
 				hook.save
 				c.res.code(500)
 				c.res.content("error:" + e.details)
+			}
+			case e:TimeoutError => {
+				hook.param('lasterror -> "TimeoutError")
+				hook.save
+				c.res.code(500)
+				c.res.content("timeout")
 			}
 		}
 	}

@@ -4,15 +4,20 @@ import java.lang.System
 import org.mozilla.javascript._
 import scala.collection.mutable.{HashMap, ArrayBuffer}
 
+class TimeoutError extends RuntimeException
+
 object HookRunner {
+	ContextFactory.initGlobal(new SandboxContextFactory());
+
 	def run (source: String, stash: HashMap[String, Any], init:String):String = {
 		if (source == null) return ""
 		var ret = ""
 
 		val ctx = Context.enter()
 		try {
-			ctx.setWrapFactory(new SandboxWrapFactory())
 			ctx.setLanguageVersion(Context.VERSION_1_7)
+			ctx.setInstructionObserverThreshold(1000)
+			ctx.setWrapFactory(new SandboxWrapFactory())
 
 			ctx.setClassShutter(new ClassShutter() {
 				def visibleToScripts(fullClassName: String) = fullClassName match {
@@ -58,7 +63,6 @@ class SandboxContext extends Context {
 class SandboxContextFactory extends ContextFactory {
 	override def makeContext ():Context = {
 		val ret = new SandboxContext()
-		ret.setInstructionObserverThreshold(1000)
 		ret
 	}
 
@@ -66,7 +70,7 @@ class SandboxContextFactory extends ContextFactory {
 		val ctx = context.asInstanceOf[SandboxContext];
 		val current = System.currentTimeMillis()
 		if (current >= ctx.startTime + 1000) {
-			throw new Error();
+			throw new TimeoutError();
 		}
 	}
 
