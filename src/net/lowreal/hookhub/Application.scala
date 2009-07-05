@@ -44,6 +44,7 @@ class AppHttpRouter extends HttpRouter {
 		
 		val rhino = new RhinoView[MyContext]
 		def view (name:String) = {
+			c.stash("author") = c.req.param("user")
 			rhino(name, this)
 		}
 	}
@@ -92,8 +93,18 @@ class AppHttpRouter extends HttpRouter {
 			case _ => { }
 		}
 
-		c.stash("hooks") = Hook.select('user -> c.user.getEmail).toList
+		c.stash("hooks") = Hook.select('user -> c.req.param("user")).toList
 		c.view("user")
+	}
+
+	route("/:user/hook/:id") { c => 
+		c.stash("hook") = Hook.find(c.req.param("id").toInt)
+		c.view("hook")
+	}
+
+	route("/:user/hook/:id/edit") { c => 
+		c.stash("hook") = Hook.find(c.req.param("id").toInt)
+		c.view("hook.edit")
 	}
 
 	route("/:user/config") { c => 

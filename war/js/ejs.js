@@ -56,6 +56,12 @@ EJS.prototype = {
 	}
 };
 
+function stash (key) {
+	return c.stash().apply(key)
+}
+
+user = c.user().getEmail();
+author = stash("author");
 
 new EJS(template).run({});
 

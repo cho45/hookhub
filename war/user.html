@@ -1,17 +1,16 @@
 <%=== v.render('_header', c) %>
 <h2>
 	Hooks
-	<% if (c.userIsAuthor) { %>
-	<a href="/<%= c.user().getEmail() %>/edit">Edit</a>
-	<a href="/<%= c.user().getEmail() %>/config">Config</a>
+	<% if (c.userIsAuthor()) { %>
+		<a href="/<%= author  %>/edit">Edit</a>
+		<a href="/<%= author %>/config">Config</a>
 	<% } %>
 </h2>
 
 	<% hooks = c.stash().apply('hooks') %>
 	<% for (var i = 0; i < hooks.length(); i++) { var hook = hooks.apply(i) %>
 	<div>
-		<%= hook.param('code') %>
-		(<%= hook.key().getId() %>)
+		<a href="/<%= author %>/hook/<%= hook.key().getId() %>"><%= hook.param('title') %></a>
 	</div>
 	<% } %>
 
