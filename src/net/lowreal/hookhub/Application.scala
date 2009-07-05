@@ -96,7 +96,7 @@ class AppHttpRouter extends HttpRouter {
 				hook.param('result -> e.details)
 				hook.save
 				c.res.code(500)
-				c.res.content("error:" + e.details)
+				c.res.content("error:" + e.details + " " + e.sourceName + ":" + e.lineNumber)
 			}
 			case e:TimeoutError => {
 				hook.param('result -> "TimeoutError")

@@ -1,2 +1,4 @@
-Global = (function () { return this })();
+Global = (function () {
+	return this;
+})();
 

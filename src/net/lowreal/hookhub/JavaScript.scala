@@ -51,7 +51,9 @@ object HookRunner {
 
 		override def get (name: String, start: Scriptable):Object = (javaObject, name) match {
 			case ( _:Http, "request") => super.get(name, start)
-			case _ => null
+			case ( _:HashMap[String, String], "apply") => super.get(name, start)
+			case ( _:HashMap[String, String], "keys") => super.get(name, start)
+			case _ => { println(javaObject, name); null }
 		}
 	}
 
@@ -94,13 +96,26 @@ object HookRunner {
 
 		val ctx = Context.enter()
 		try {
+			def toJSObj (map:HashMap[String, Any]):ScriptableObject = {
+				val ret = ctx.initStandardObjects
+				for ( prop <- map ) prop match {
+					case (key:String, value:String) => {
+						ret.put(key, ret, value)
+					}
+					case (key:String, value:HashMap[String, Any]) =>  {
+						ret.put(key, ret, toJSObj(value))
+					}
+				}
+				ret
+			}
+			val jsstash = toJSObj(stash)
+
 			ctx.setLanguageVersion(Context.VERSION_1_7)
 			ctx.setInstructionObserverThreshold(1000)
 			ctx.setWrapFactory(new SandboxWrapFactory())
 
 			ctx.setClassShutter(new ClassShutter() {
 				def visibleToScripts(fullClassName: String) = fullClassName match {
-					case "scala.collection.mutable.HashMap" => true
 					case "net.lowreal.hookhub.HookRunner$Http" => true
 					case _ => false
 				}
@@ -110,8 +125,9 @@ object HookRunner {
 
 			val scope = ctx.initStandardObjects()
 
-			ScriptableObject.putProperty(scope, "stash", Context.javaToJS(stash, scope));
+			// ScriptableObject.putProperty(scope, "_args", Context.javaToJS(stash, scope));
 			ScriptableObject.putProperty(scope, "http",  Context.javaToJS(new Http, scope));
+			ScriptableObject.putProperty(scope, "stash", jsstash);
 			ctx.evaluateString(scope, init, "<init>", 1, null)
 
 			val result = ctx.evaluateString(scope, source, "<run>", 1, null)
@@ -122,4 +138,5 @@ object HookRunner {
 		}
 		ret
 	}
+
 }
