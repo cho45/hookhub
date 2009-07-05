@@ -57,7 +57,9 @@ EJS.prototype = {
 };
 
 function stash (key) {
-	return c.stash().apply(key)
+	if (c.stash().contains(key)) {
+		return c.stash().apply(key)
+	}
 }
 
 user = c.user().getEmail();

@@ -2,51 +2,36 @@ package net.lowreal.hookhub
 
 import java.lang.System
 import org.mozilla.javascript._
+import scala.collection.mutable.{HashMap, ArrayBuffer}
 
-object Rhino {
-	ContextFactory.initGlobal(new SandboxContextFactory());
-
-	def js (source: String):String = {
+object HookRunner {
+	def run (source: String, stash: HashMap[String, Any], init:String):String = {
 		if (source == null) return ""
 		var ret = ""
 
 		val ctx = Context.enter()
-		ctx.setLanguageVersion(Context.VERSION_1_7)
-
-		// Java のクラスを一切エクスポートしない
-		ctx.setClassShutter(new ClassShutter() {
-			def visibleToScripts(fullClassName: String) = false
-		})
-	//	ctx.setSecurityController(new SecurityController() {
-	//	})
-
 		try {
+			ctx.setWrapFactory(new SandboxWrapFactory())
+			ctx.setLanguageVersion(Context.VERSION_1_7)
+
+			ctx.setClassShutter(new ClassShutter() {
+				def visibleToScripts(fullClassName: String) = fullClassName match {
+					case "scala.collection.mutable.HashMap" => true
+					case _ => false
+				}
+			})
+		//	tx.setSecurityController(new SecurityController() {
+		//	})
+
 			val scope = ctx.initStandardObjects()
 
-			ctx.evaluateString(
-				scope,
-				"""
-				Global = (function () { return this })();
-				""",
-				"<init>",
-				1,
-				null
-			)
+			ScriptableObject.putProperty(scope, "stash", Context.javaToJS(stash, scope));
+			ctx.evaluateString(scope, init, "<init>", 1, null)
 
-			// JSON に変換してセットがいい
-			println("running")
-			val result = ctx.evaluateString(
-				scope,
-				source,
-				"<run>",
-				1,
-				null
-			)
-
+			val result = ctx.evaluateString(scope, source, "<run>", 1, null)
 
 			ret =  Context.toString(result)
-		} catch {
-			case e: EcmaError => println(e)
+			println(ret)
 		} finally {
 			Context.exit()
 		}
@@ -74,7 +59,6 @@ class SandboxContextFactory extends ContextFactory {
 	override def makeContext ():Context = {
 		val ret = new SandboxContext()
 		ret.setInstructionObserverThreshold(1000)
-		ret.setWrapFactory(new SandboxWrapFactory())
 		ret
 	}
 

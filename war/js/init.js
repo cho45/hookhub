@@ -1,0 +1,2 @@
+Global = (function () { return this })();
+

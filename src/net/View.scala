@@ -10,21 +10,25 @@ class RhinoView[T <: net.lowreal.skirts.Context] {
 
 	def render (name:String, context:T):String = {
 		val ctx = Context.enter()
-		ctx.setLanguageVersion(Context.VERSION_1_7)
+		try {
+			ctx.setLanguageVersion(Context.VERSION_1_7)
 
-		val scope = ctx.initStandardObjects()
+			val scope = ctx.initStandardObjects()
 
-		ScriptableObject.putProperty(scope, "c", Context.javaToJS(context, scope));
-		ScriptableObject.putProperty(scope, "v", Context.javaToJS(this, scope));
+			ScriptableObject.putProperty(scope, "c", Context.javaToJS(context, scope));
+			ScriptableObject.putProperty(scope, "v", Context.javaToJS(this, scope));
 
-		val template = context.file(name + ".html")
-		ScriptableObject.putProperty(scope, "template", Context.javaToJS(template, scope));
+			val template = context.file(name + ".html")
+			ScriptableObject.putProperty(scope, "template", Context.javaToJS(template, scope));
 
 
-		val ejs = context.file("js/ejs.js")
-		val result = ctx.evaluateString(scope, ejs, name, 1, null) 
+			val ejs = context.file("js/ejs.js")
+			val result = ctx.evaluateString(scope, ejs, name, 1, null) 
 
-		Context.toString(result)
+			Context.toString(result)
+		} finally {
+			Context.exit()
+		}
 	}
 }
 

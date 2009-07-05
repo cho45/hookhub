@@ -7,5 +7,5 @@
 	<a href="/<%= author %>/hook/<%= hook.key().getId() %>/edit">Edit</a>
 </h2>
 <pre><%= hook.param('code') %></pre>
-<code><%= c.absolute("/" + author + "/hook/" + hook.param('token')) %></code>
+<code><%= c.absolute("/hook/" + hook.param('token')) %></code>
 <%=== v.render('_footer', c) %>

@@ -2,10 +2,13 @@ package net.lowreal.hookhub
 
 import javax.servlet.http.{HttpServlet, HttpServletResponse, HttpServletRequest}
 import scala.collection.jcl.Conversions._
+import scala.collection.mutable.{HashMap, ArrayBuffer}
 
 import net.lowreal.skirts._
 import com.google.appengine.api.users.{User, UserService, UserServiceFactory}
 import java.util.Date
+
+import org.mozilla.javascript.EcmaError
 
 class AppHttpRouter extends HttpRouter {
 	val US    = UserServiceFactory.getUserService
@@ -44,7 +47,9 @@ class AppHttpRouter extends HttpRouter {
 		
 		val rhino = new RhinoView[MyContext]
 		def view (name:String) = {
-			c.stash("author") = c.req.param("user")
+			if (c.req.param.contains("user")) {
+				c.stash("author") = c.req.param("user")
+			}
 			rhino(name, this)
 		}
 	}
@@ -69,6 +74,32 @@ class AppHttpRouter extends HttpRouter {
 		c.res.redirect("/" + c.user.getEmail + "/")
 	}
 
+	route("/hook/:token") { c => 
+		val token  = c.req.param("token")
+		val hook   = Hook.find('token -> token).getOrElse(throw new NotFound)
+		val stash  = new HashMap[String, Any]
+		val config = new HashMap[String, String]
+		for (c <- Config.select('user -> hook('user))) {
+			config(c('key).asInstanceOf[String]) = c('value).asInstanceOf[String]
+		}
+		stash += "config" -> config
+		stash += "params" -> c.req.param
+		
+		try {
+			HookRunner.run(hook('code).asInstanceOf[String], stash, c.file("js/init.js"))
+			hook.param('lasterror -> "")
+			hook.save
+			c.res.code(200)
+			c.res.content("ok")
+		} catch {
+			case e:EcmaError => {
+				hook.param('lasterror -> e.details)
+				hook.save
+				c.res.code(500)
+				c.res.content("error:" + e.details)
+			}
+		}
+	}
 
 	route("/:user") { c => 
 		c.res.redirect("/" + c.req.param("user") + "/")
