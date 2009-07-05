@@ -74,13 +74,13 @@ class AppHttpRouter extends HttpRouter {
 	}
 
 	route("/:user/") { c => 
-//		if (c.req.param("delete") != null) {
-//			val id = c.req.param("delete").toInt
-//			Hook.find(id) match {
-//				case None    => {}
-//				case Some(h) => h.delete
-//			}
-//		}
+		if (c.req.param.contains("delete")) {
+			val id = c.req.param("delete").toInt
+			Hook.find(id) match {
+				case None    => {}
+				case Some(h) => h.delete
+			}
+		}
 
 		c.req.method match {
 			case "POST" => {
@@ -98,6 +98,17 @@ class AppHttpRouter extends HttpRouter {
 
 	route("/:user/config") { c => 
 		c.requireUserIsAuthor
+
+		c.req.method match {
+			case "POST" => {
+				val key    = c.req.param("key")
+				val value  = c.req.param("value")
+				Config.create('user -> c.user.getEmail, 'key -> key, 'value -> value, 'created -> new Date()).save
+			}
+			case _ => { }
+		}
+
+		c.stash("configs") = Config.select('user -> c.user.getEmail, 'order -> 'key).toList
 		c.view("user/config")
 	}
 }

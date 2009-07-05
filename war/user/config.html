@@ -1,0 +1,24 @@
+<%=== v.render('_header', c) %>
+<h2>Config</h2>
+<form action="" method="post">
+	<dl>
+		<dt>key</dt>
+		<dd><input type="text" name="key" size="20" value=""/></dd>
+		<dt>value</dt>
+		<dd><input type="text" name="value" size="20" value=""/></dd>
+	</dl>
+	<p>
+		<input type="submit" value="post"/>
+	</p>
+</form>
+<div class="">
+	<% configs = c.stash().apply('configs') %>
+	<% for (var i = 0; i < configs.length(); i++) { var config = configs.apply(i) %>
+	<div>
+		<div>Key: <%= config.param('key') %></div>
+		<div>Value: <%= config.param('value') %></div>
+		(<%= config.key().getId() %>)
+	</div>
+	<% } %>
+</div>
+<%=== v.render('_footer', c) %>

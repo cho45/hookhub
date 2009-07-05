@@ -26,7 +26,14 @@ class DS [T <: DS[T]] () {
 	def select (args: (Symbol, Any)*):Iterator[T] = {
 		val query = new Query(entityName)
 		for ( (key, value) <- args) {
-			query.addFilter(key.name, Query.FilterOperator.EQUAL, value)
+			(key, value) match {
+				case ('order, key:Symbol) => {
+					query.addSort(key.name)
+				}
+				case _ => {
+					query.addFilter(key.name, Query.FilterOperator.EQUAL, value)
+				}
+			}
 		}
 		val i = datastore.prepare(query).asIterator
 		val self = this

@@ -3,7 +3,9 @@
 	Hooks
 	<% if (c.userIsAuthor) { %>
 	<a href="/<%= c.user().getEmail() %>/edit">Edit</a>
+	<a href="/<%= c.user().getEmail() %>/config">Config</a>
 	<% } %>
+</h2>
 
 	<% hooks = c.stash().apply('hooks') %>
 	<% for (var i = 0; i < hooks.length(); i++) { var hook = hooks.apply(i) %>
@@ -21,5 +23,4 @@
 		<input type="submit" value="save"/>
 		</p>
 	</form>
-</h2>
 <%=== v.render('_footer', c) %>
