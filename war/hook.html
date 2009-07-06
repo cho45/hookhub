@@ -8,7 +8,10 @@
 </h2>
 <pre><%= hook.param('code') %></pre>
 <pre><%= hook.param('result') %></pre>
+
 <% if (c.userIsAuthor()) { %>
-<input type="text" value="<%= c.absolute("/hook/" + hook.param('token')) %>" size="80" onfocus="this.select()"/>
+<label for="hook-uri">Hook URL::</label>
+<input type="text" id="hook-uri" value="<%= c.absolute("/hook/" + hook.param('token')) %>" size="80" onclick="this.select()" onfocus="this.select()"/>
 <% } %>
+
 <%=== v.render('_footer', c) %>

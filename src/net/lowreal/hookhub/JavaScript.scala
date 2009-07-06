@@ -136,6 +136,7 @@ object HookRunner {
 			// ScriptableObject.putProperty(scope, "_args", Context.javaToJS(stash, scope));
 			ScriptableObject.putProperty(scope, "http",  Context.javaToJS(new Http, scope));
 			ScriptableObject.putProperty(scope, "stash", jsstash);
+			scope.setAttributes("http", ScriptableObject.DONTENUM | ScriptableObject.PERMANENT | ScriptableObject.READONLY);
 			ctx.evaluateString(scope, init, "<init>", 1, null)
 
 			val result = ctx.evaluateString(scope, source, "<run>", 1, null)
