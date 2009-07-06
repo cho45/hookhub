@@ -33,23 +33,47 @@ def scalac(*args)
 	sh "scalac", *args
 end
 
-task :default => :run
-
-task :run => [:build] do
-	sh GAE_SDK + "bin/dev_appserver.sh", "war"
-end
-
-task :build => [:copylibs, :build_all]
-
-task :build_all => ["war/WEB-INF/classes"] do
+def build_all
 	buildtime = File.mtime(".buildtime").to_i rescue 0
 	srcs = src(".scala", "src/").select {|f|
 		File.mtime(f).to_i > buildtime
 	}
+	ret = nil
 	unless srcs.empty?
-		scalac "-d", "war/WEB-INF/classes", *srcs
-		touch ".buildtime"
+		t = Time.now
+		ret = scalac "-d", "war/WEB-INF/classes", *srcs
+		File.utime t, t, ".buildtime"
 	end
+	ret
+end
+
+task :default => :run
+
+task :run => [:build] do
+	pid = nil
+	END {
+		Process.kill(:INT, -pid)
+	}
+	loop do
+		begin
+			if !pid || build_all
+				Process.kill(:INT, -pid) if pid
+				pid = fork {
+					Process.setpgrp
+					exec(GAE_SDK + "bin/dev_appserver.sh", "war")
+				}
+			end
+		rescue Exception => e
+			sleep 1
+		end
+		sleep 1
+	end
+end
+
+task :build => [:copylibs]
+
+task :build_all => ["war/WEB-INF/classes"] do
+	build_all
 end
 
 task :copylibs do
