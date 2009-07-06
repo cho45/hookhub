@@ -101,4 +101,5 @@ class DS [T <: DS[T]] () {
 		datastore.delete(entity.getKey)
 		this.asInstanceOf[T]
 	}
+
 }

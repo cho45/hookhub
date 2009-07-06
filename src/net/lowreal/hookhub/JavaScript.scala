@@ -17,6 +17,8 @@ object HookRunner {
 
 			val url  = new URL(obj.get("url", obj).asInstanceOf[String])
 			val http = url.openConnection().asInstanceOf[HttpURLConnection]
+			http.setConnectTimeout(3)
+			http.setReadTimeout(3)
 			http.setRequestMethod(method)
 			http.setInstanceFollowRedirects(false)
 			http.setRequestProperty("User-Agent", "Hookhub")
@@ -76,7 +78,7 @@ object HookRunner {
 		override def observeInstructionCount (context: Context, instructionCount: Int):Unit = {
 			val ctx = context.asInstanceOf[SandboxContext];
 			val current = System.currentTimeMillis()
-			if (current >= ctx.startTime + 1000) {
+			if (current >= ctx.startTime + 3000) {
 				throw new TimeoutError();
 			}
 		}
@@ -100,6 +102,12 @@ object HookRunner {
 				val ret = ctx.initStandardObjects
 				for ( prop <- map ) prop match {
 					case (key:String, value:String) => {
+						ret.put(key, ret, value)
+					}
+					case (key:String, value:Long) => {
+						ret.put(key, ret, value)
+					}
+					case (key:String, value:Boolean) => {
 						ret.put(key, ret, value)
 					}
 					case (key:String, value:HashMap[String, Any]) =>  {

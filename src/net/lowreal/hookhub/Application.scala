@@ -84,13 +84,15 @@ class AppHttpRouter extends HttpRouter {
 		}
 		stash += "config" -> config
 		stash += "params" -> c.req.param
+		stash += "user"   -> hook('user).asInstanceOf[String]
+		stash += "id"     -> hook.key.getId
 		
 		try {
 			val res = HookRunner.run(hook('code).asInstanceOf[String], stash, c.file("js/init.js"))
 			hook.param('result -> res)
 			hook.save
 			c.res.code(200)
-			c.res.content("ok")
+			c.res.content("ok: " + res)
 		} catch {
 			case e:RhinoException => {
 				hook.param('result -> e.details)
