@@ -90,13 +90,13 @@ class AppHttpRouter extends HttpRouter {
 		
 		try {
 			val res = HookRunner.run(hook('code).asInstanceOf[String], stash, c.file("js/init.js"))
-			hook.param('result -> res)
+			hook.param('result -> res.take(500).toString)
 			hook.save
 			c.res.code(200)
 			c.res.content("ok: " + res)
 		} catch {
 			case e:RhinoException => {
-				hook.param('result -> e.details)
+				hook.param('result -> e.details.take(500).toString)
 				hook.save
 				c.res.code(500)
 				c.res.content("error:" + e.details + " " + e.sourceName + ":" + e.lineNumber)

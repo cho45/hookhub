@@ -13,4 +13,44 @@
 	</p>
 </form>
 
+<h2>Remarks</h2>
+<p>This code has some restrictions:</p>
+<ul>
+	<li>Done within 3seconds.</li>
+	<li>1000 recursion.</li>
+</ul>
+
+<h2>Active Global Properties</h2>
+<p>Some global properties are pre-defined.</p>
+<dl>
+	<dt><var>stash</var> : <code>Object</code></dt>
+	<dd>
+		This object includes some parameters from hook request
+	</dd>
+	<dt><var>stash.user</var> : <code>String</code></dt>
+	<dd>
+		Hook author e-mail
+	</dd>
+	<dt><var>stash.id</var> : <code>Number</code></dt>
+	<dd>
+		Id for the hook
+	</dd>
+	<dt><var>stash.config</var> : <code>Object</code></dt>
+	<dd>
+		Config set by
+		<% if (user) { %>
+		<a href="/<%= user %>/config">user config page</a>
+		<% } else { %>
+		user config page
+		<% } %>
+	</dd>
+	<dt><var>stash.params</var> : <code>Object</code></dt>
+	<dd>
+		Parameters from hook request
+	</dd>
+
+	<dt>http.request</dt>
+</dl>
+
+
 <%=== v.render('_footer', c) %>
