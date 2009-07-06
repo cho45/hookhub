@@ -56,14 +56,20 @@ EJS.prototype = {
 	}
 };
 
-function stash (key) {
-	if (c.stash().contains(key)) {
-		return c.stash().apply(key)
-	}
-}
 
-user = c.user().getEmail();
-author = stash("author");
+Global = (function () {
+	this.stash = function (key) {
+		if (c.stash().contains(key)) {
+			return c.stash().apply(key)
+		}
+	}
+
+	this.user = c.user() ? c.user().getEmail() : null;
+	this.author = stash("author");
+
+	return this;
+})();
+
 
 new EJS(template).run({});
 

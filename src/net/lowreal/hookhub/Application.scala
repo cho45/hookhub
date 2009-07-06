@@ -37,7 +37,8 @@ class AppHttpRouter extends HttpRouter {
 			}
 		}
 
-		def userIsAuthor () = {
+		def userIsAuthor ():Boolean = {
+			if (c.user == null) return false
 			c.user.getEmail == c.req.param("user")
 		}
 
