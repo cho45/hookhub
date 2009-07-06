@@ -52,7 +52,7 @@ object HookRunner {
 
 					val headers = http.getHeaderFields()
 					for ( (key, value) <- headers) {
-						jsheaders.put(key, jsheaders, value(0))
+						jsheaders.put(key.capitalize, jsheaders, value(0))
 					}
 
 					val reader = new BufferedReader(new InputStreamReader(http.getInputStream()))
