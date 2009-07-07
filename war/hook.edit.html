@@ -55,9 +55,57 @@
 				Parameters from hook request
 			</dd>
 
-			<dt><var>http(opts: Object)</var> : Function</dt>
+			<dt><var>http(opts: Object)</var> : Function => Object</dt>
 			<dd>
-				HTTP request.
+				HTTP request synchronously-executed. 
+			<pre>
+// Example:
+http({
+	method  : "post",
+	url     : url,
+	data    : http.data(params),
+	headers : {
+		"Content-Type":"application/x-www-form-urlencoded"
+	}
+})
+</pre>
+				<pre>
+// Sample returned value
+({
+	code: 200,
+	headers : { 'Content-type':"text/plain" },
+	body : "Hello"
+})
+</pre>
+			</dd>
+
+			<dt><var>http.post(url: String, params: Object) => Object</var> : Function</dt>
+			<dd>
+				HTTP request using POST method.
+			</dd>
+
+			<dt><var>http.get(url: String)</var> : Function => Object</dt>
+			<dd>
+				HTTP request using GET method.
+			</dd>
+
+			<dt><var>http.data(params: Object)</var> : Function => String</dt>
+			<dd>
+				Consturct post data from Object.
+				<pre>
+({
+	foo: "bar",
+	baz: "piyo"
+})
+//=>  "foo=bar&amp;baz=piyo"
+</pre>
+				<pre>
+({
+	foo: "bar",
+	baz: ["piyo", "puyo"]
+})
+//=>  "foo=bar&amp;baz=piyo&amp;baz=puyo"
+</pre>
 			</dd>
 		</dl>
 	</div>
