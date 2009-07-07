@@ -70,12 +70,14 @@ form input.text:focus {
 }
 
 #recently-hooked h2 {
+	/*
 	background: url('/images/recently_hooked.png') no-repeat;
 	margin: 0 0 20px -5px;
 	width: 158px;
 	height: 23px;
 	text-indent: -10000px;
 	overflow: hidden;
+	*/
 }
 
 .section {
