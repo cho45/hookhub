@@ -173,7 +173,7 @@ class AppHttpRouter extends HttpRouter {
 			case _ => { }
 		}
 
-		c.view("hook.edit")
+	c.view("hook.edit")
 	}
 
 	route("/:user/config") { c => 

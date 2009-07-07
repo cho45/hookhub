@@ -167,7 +167,9 @@ object HookRunner {
 
 			val result = ctx.evaluateString(scope, source, "<run>", 1, null)
 
-			ret =  Context.toString(result)
+			// ret =  Context.toString(result)
+			val uneval = scope.get("uneval", scope).asInstanceOf[Function]
+			ret = uneval.call(ctx, scope, scope, Array(result)).toString
 		} finally {
 			Context.exit()
 		}
