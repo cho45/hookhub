@@ -11,6 +11,22 @@ body {
 	line-height: 1.6;
 }
 
+.less {
+	font-size: 80%;
+}
+
+a:link {
+	color: #333;
+}
+
+a:visited {
+	color: #666;
+}
+
+a:hover {
+	text-decoration: none;
+}
+
 form {
 }
 
