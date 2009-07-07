@@ -95,6 +95,27 @@ form input.text:focus {
 	white-space: nowrap;
 }
 
+.hook .title .less {
+	font-size: 80%;
+	font-weight: normal;
+	margin: 0 0 0 1em;
+}
+
+.hook .title a:link {
+	color: #fff;
+	text-decoration: none;
+}
+
+.hook .title a:visited {
+	color: #fff;
+	text-decoration: none;
+}
+
+.hook .title a:hover {
+	color: #fff;
+	text-decoration: underline;
+}
+
 .hook .author {
 	float: left;
 }

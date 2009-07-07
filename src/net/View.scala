@@ -1,6 +1,9 @@
 package net.lowreal.hookhub
 
 import scala.io.Source
+import java.util._
+import java.io._
+import java.security._
 
 // import net.lowreal.skirts._
 import org.mozilla.javascript._
@@ -16,6 +19,23 @@ class RhinoView[T <: net.lowreal.skirts.Context] {
 
 	def log (obj:Any) {
 		println(obj)
+	}
+
+	def icon (name:String):String = {
+		def hex (array:Array[byte]):String = {        
+			val sb = new StringBuffer();        
+			for (c <- array) {            
+				sb.append(Integer.toHexString((c  & 0xFF) | 0x100).substring(1, 3));        
+			}        
+			sb.toString
+		}
+
+		val md = MessageDigest.getInstance("MD5");
+		"http://www.gravatar.com/avatar/" + hex(md.digest(name.getBytes("CP1252"))) + "?s=60"
+	}
+
+	def name (name:String):String = {
+		name.replaceAll("""@.+""", "") 
 	}
 
 	def render (name:String, context:T):String = {

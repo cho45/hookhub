@@ -1,0 +1,19 @@
+<div class="hook">
+	<div class="title">
+		<a href="/<%= user %>/hook/<%= hook.key().getId() %>">
+			<%= hook.title() %>
+		</a>
+
+		<% if (hook.user() == user) { %>
+		<span class="less">
+			(<a href="/<%= user %>/hook/<%= hook.key().getId() %>/edit">Edit</a>)
+		</span>
+		<% } %>
+	</div>
+	<div class="author">
+		<img src="<%= v.icon(hook.user()) %>" width="60" height="60" alt="<%= v.name(hook.user()) %>"/>
+	</div>
+	<div class="code">
+		<pre><%= hook.code() %></pre>
+	</div>
+</div>

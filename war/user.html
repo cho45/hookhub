@@ -5,9 +5,10 @@
 
 	<% hooks = stash('hooks') %>
 	<% for (var i = 0; i < hooks.length(); i++) { var hook = hooks.apply(i) %>
-	<div>
+	<%include= _hook %>
+	<!-- div>
 		<a href="/<%= author %>/hook/<%= hook.key().getId() %>"><%= hook.title() %></a>
-	</div>
+	</div -->
 	<% } %>
 </div>
 
