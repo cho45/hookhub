@@ -24,6 +24,10 @@ class AppHttpRouter extends HttpRouter {
 			US.createLogoutURL(c.req.requestURI)
 		}
 
+		def requireSid () = {
+			c.req.sessionId == c.req.param("sid")
+		}
+
 		def requireUser () = {
 			val user = US.getCurrentUser
 			if (user == null) {
@@ -175,13 +179,22 @@ class AppHttpRouter extends HttpRouter {
 	route("/:user/config") { c => 
 		c.requireUserIsAuthor
 
-		c.req.method match {
-			case "POST" => {
+		(c.req.method, c.req.param.getOrElse("mode", "create")) match {
+			case ("POST", "create") => {
+				c.requireSid
+
 				val key    = c.req.param("key")
 				val value  = c.req.param("value")
 				val config = Config.ensure('user -> c.user.getEmail, 'key -> key)
 				config.param('value -> value)
 				config.save
+			}
+			case ("POST", "delete") => {
+				c.requireSid
+
+				val config = Config.find(c.req.param("id").toInt).getOrElse(throw new NotFound)
+				config.delete
+				c.redirect("/" + c.user.getEmail + "/config")
 			}
 			case _ => { }
 		}

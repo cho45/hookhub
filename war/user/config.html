@@ -8,17 +8,38 @@
 		<dd><input type="text" name="value" size="20" value=""/></dd>
 	</dl>
 	<p>
+		<input type="hidden" name="sid" value="<%= c.req().session().getId() %>"/>
 		<input type="submit" value="post"/>
 	</p>
 </form>
-<div class="">
-	<% configs = c.stash().apply('configs') %>
-	<% for (var i = 0; i < configs.length(); i++) { var config = configs.apply(i) %>
-	<div>
-		<div>Key: <%= config.param('key') %></div>
-		<div>Value: <%= config.param('value') %></div>
-		(<%= config.key().getId() %>)
-	</div>
-	<% } %>
-</div>
+
+<table>
+	<thead>
+		<tr>
+			<th>Key</th>
+			<th>Value</th>
+			<th></th>
+		</tr>
+	</thead>
+	<tbody>
+		<% configs = stash('configs') %>
+		<% for (var i = 0; i < configs.length(); i++) { var config = configs.apply(i) %>
+		<tr>
+			<td><%= config.param('key') %></td>
+			<td><%= config.param('value') %></td>
+			<td>
+				<form action="" method="post">
+					<span>
+						<input type="hidden" name="sid" value="<%= c.req().session().getId() %>"/>
+						<input type="hidden" name="id" value="<%= config.key().getId() %>"/>
+						<input type="hidden" name="mode" value="delete"/>
+						<input type="submit" value="Delete"/>
+					</span>
+				</form>
+			</td>
+		</tr>
+		<% } %>
+	</tbody>
+</table>
+
 <%=== v.render('_footer', c) %>
