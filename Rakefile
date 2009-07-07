@@ -49,6 +49,10 @@ end
 
 task :default => :run
 
+task :deploy do
+	sh GAE_SDK + "bin/appcfg.sh", "update", "war"
+end
+
 task :run => [:build] do
 	pid = nil
 	END {
