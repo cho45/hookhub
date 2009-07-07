@@ -13,13 +13,13 @@ EJS.prototype = {
 
 	compile : function (s, opts) {
 		s = String(s);
-		ret = [
+		var ret = [
 			'var ret = [];',
 			'ret.push(""'
 		];
 
 		var m, c, flag;
-		while (( m = s.match(/<%(=*)/))) {
+		while (( m = s.match(/<%((?:include)?(?:=*))/))) {
 			flag = m[1];
 			ret.push(',', uneval(s.slice(0, m.index)));
 			s = s.slice(m.index + m[0].length);
@@ -34,13 +34,17 @@ EJS.prototype = {
 				case "===":
 					ret.push(',', c);
 					break;
+				case "include=":
+					var c = uneval(this.compile(opts.include(c), opts));
+					ret.push(', ', c, '()(s)');
+					break;
 				default:
 					ret.push(");", c, "\nret.push(''");
 					break;
 			}
 		}
 		ret.push(
-			',', uneval(s), ');',
+			',', uneval(s), ");\n",
 			'return ret.join("");'
 		);
 		if (opts.useWith) {
@@ -49,9 +53,10 @@ EJS.prototype = {
 		}
 		ret.unshift(
 			'var map = { "&" : "&amp;", "<" : "&lt;" , ">" : "&gt;"}, f = function (m) {return map[m]};',
-			"return function (s) {"
+			"return function (s) {\n"
 		);
-		ret.push("}");
+		ret.push("\n}");
+
 		return new Function(ret.join(''));
 	}
 };
@@ -62,6 +67,7 @@ Global = (function () {
 		if (c.stash().contains(key)) {
 			return c.stash().apply(key)
 		}
+		return null;
 	}
 
 	this.user = c.user() ? c.user().getEmail() : null;
@@ -71,5 +77,10 @@ Global = (function () {
 })();
 
 
-new EJS(template).run({});
+new EJS(template, {
+	include : function (name) {
+		name = name.replace(/^\s+|\s+$/g, "");
+		return v.file(name);
+	}
+}).run({});
 

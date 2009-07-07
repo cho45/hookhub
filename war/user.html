@@ -1,11 +1,7 @@
-<%=== v.render('_header', c) %>
-<h2>
-	Hooks
-	<% if (c.userIsAuthor()) { %>
-		<a href="/<%= author  %>/hook/new">new</a>
-		<a href="/<%= author %>/config">config</a>
-	<% } %>
-</h2>
+<%include= _header %>
+
+<div id="user-hooks" class="section">
+	<h2>Hooks</h2>
 
 	<% hooks = stash('hooks') %>
 	<% for (var i = 0; i < hooks.length(); i++) { var hook = hooks.apply(i) %>
@@ -13,5 +9,6 @@
 		<a href="/<%= author %>/hook/<%= hook.key().getId() %>"><%= hook.title() %></a>
 	</div>
 	<% } %>
+</div>
 
-<%=== v.render('_footer', c) %>
+<%include= _footer %>

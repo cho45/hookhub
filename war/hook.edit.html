@@ -1,59 +1,66 @@
-<%=== v.render('_header', c) %>
+<%include= _header %>
 <% hook = stash("hook") %>
-<form action="" method="post">
-	<dl>
-		<dt>Title</dt>
-		<dd><input type="text" name="title" value="<%= hook.title() || "" %>"/></dd>
-		<dt>Code</dt>
-		<dd><textarea name="code" cols="50" rows="20"><%= hook.code() || "" %></textarea></dd>
-	</dl>
-	<p>
-	<input type="hidden" name="id" value="<%= hook.key().getId() || "" %>"/>
-	<input type="submit" value="submit"/>
-	</p>
-</form>
 
-<h2>Remarks</h2>
-<p>This code has some restrictions:</p>
-<ul>
-	<li>Done within 3seconds.</li>
-	<li>1000 recursion.</li>
-</ul>
+<div id="edit-hook" class="section">
+	<h2>Edit Hook</h2>
+	<form action="" method="post">
+		<dl>
+			<dt>Title</dt>
+			<dd><input type="text" name="title" value="<%= hook.title() || "" %>" class="text"/></dd>
+			<dt>Code</dt>
+			<dd><textarea name="code" cols="50" rows="20"><%= hook.code() || "" %></textarea></dd>
+		</dl>
+		<p>
+		<input type="hidden" name="id" value="<%= hook.key().getId() || "" %>"/>
+		<input type="submit" value="submit"/>
+		</p>
+	</form>
+</div>
 
-<h2>Active Global Properties</h2>
-<p>Some global properties are pre-defined.</p>
-<dl>
-	<dt><var>stash</var> : <code>Object</code></dt>
-	<dd>
-		This object includes some parameters from hook request
-	</dd>
-	<dt><var>stash.user</var> : <code>String</code></dt>
-	<dd>
-		Hook author e-mail
-	</dd>
-	<dt><var>stash.id</var> : <code>Number</code></dt>
-	<dd>
-		Id for the hook
-	</dd>
-	<dt><var>stash.config</var> : <code>Object</code></dt>
-	<dd>
-		Config set by
-		<% if (user) { %>
-		<a href="/<%= user %>/config">user config page</a>
-		<% } else { %>
-		user config page
-		<% } %>
-	</dd>
-	<dt><var>stash.params</var> : <code>Object</code></dt>
-	<dd>
-		Parameters from hook request
-	</dd>
+<div id="edit-remarks" class="section">
+	<h2>Remarks</h2>
+	<p>This code has some restrictions:</p>
+	<ul>
+		<li>Done within 3seconds.</li>
+		<li>1000 recursion.</li>
+	</ul>
 
-	<dt><var>http(opts: Object)</var> : Function</dt>
-	<dd>
-		HTTP request.
-	</dd>
-</dl>
+	<div class="section">
+		<h3>Active Global Properties</h3>
+		<p>Some global properties are pre-defined.</p>
+		<dl>
+			<dt><var>stash</var> : <code>Object</code></dt>
+			<dd>
+				This object includes some parameters from hook request
+			</dd>
+			<dt><var>stash.user</var> : <code>String</code></dt>
+			<dd>
+				Hook author e-mail
+			</dd>
+			<dt><var>stash.id</var> : <code>Number</code></dt>
+			<dd>
+				Id for the hook
+			</dd>
+			<dt><var>stash.config</var> : <code>Object</code></dt>
+			<dd>
+				Config set by
+				<% if (user) { %>
+				<a href="/<%= user %>/config">user config page</a>
+				<% } else { %>
+				user config page
+				<% } %>
+			</dd>
+			<dt><var>stash.params</var> : <code>Object</code></dt>
+			<dd>
+				Parameters from hook request
+			</dd>
 
+			<dt><var>http(opts: Object)</var> : Function</dt>
+			<dd>
+				HTTP request.
+			</dd>
+		</dl>
+	</div>
+</div>
 
-<%=== v.render('_footer', c) %>
+<%include= _footer %>

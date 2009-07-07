@@ -1,17 +1,17 @@
-<%=== v.render('_header', c) %>
+<%include= _header %>
 <% hook = stash("hook") %>
-<h2>
-	Hook::
-	<%= hook.title() %>
+<div id="hook" class="section">
+	<h2>
+		Hook::
+		<%= hook.title() %>
+	</h2>
+	<pre><%= hook.code() %></pre>
+	<pre><%= hook.result() %></pre>
 
-	<a href="/<%= author %>/hook/<%= hook.key().getId() %>/edit">Edit</a>
-</h2>
-<pre><%= hook.code() %></pre>
-<pre><%= hook.result() %></pre>
-
-<% if (c.userIsAuthor()) { %>
-<label for="hook-uri">Hook URL::</label>
-<input type="text" id="hook-uri" value="<%= c.absolute("/hook/" + hook.token()) %>" size="80" onclick="this.select()" onfocus="this.select()"/>
-<% } %>
-
-<%=== v.render('_footer', c) %>
+	<% if (c.userIsAuthor()) { %>
+		<label for="hook-uri">Hook URL::</label>
+		<input type="text" id="hook-uri" value="<%= c.absolute("/hook/" + hook.token()) %>" size="80" onclick="this.select()" onfocus="this.select()"/>
+		<a href="/<%= author %>/hook/<%= hook.key().getId() %>/edit">Edit</a>
+	<% } %>
+	</div>
+<%include= _footer %>

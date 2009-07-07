@@ -10,6 +10,31 @@ body {
 	line-height: 1.6;
 }
 
+form {
+}
+
+form dl dt {
+	margin: 0;
+	padding: 0;
+	font-weight: bold;
+}
+
+form dl dd {
+	margin: 0;
+	padding: 0;
+}
+
+form textarea ,
+form input.text {
+	border: 1px solid #000;
+	width: 100%;
+}
+
+form textarea:focus ,
+form input.text:focus {
+	background: #efefef;
+}
+
 #whole {
 	width: 80%;
 	padding: 2em;
