@@ -11,11 +11,26 @@
 			<dd><textarea name="code" cols="50" rows="20"><%= hook.code() || "" %></textarea></dd>
 		</dl>
 		<p>
-		<input type="hidden" name="id" value="<%= hook.key().getId() || "" %>"/>
-		<input type="submit" value="submit"/>
+			<input type="hidden" name="sid" value="<%= c.req().session().getId() %>"/>
+			<input type="hidden" name="id" value="<%= hook.key().getId() || "" %>"/>
+			<input type="submit" value="Submit"/>
 		</p>
 	</form>
 </div>
+
+<% if (hook.key().getId()) { %>
+<div id="edit-hook" class="section">
+	<h2>Delete Hook</h2>
+	<form action="" method="post">
+		<p>
+			<input type="hidden" name="sid" value="<%= c.req().session().getId() %>"/>
+			<input type="hidden" name="id" value="<%= hook.key().getId() || "" %>"/>
+			<input type="hidden" name="mode" value="delete"/>
+			<input type="submit" value="Delete"/>
+		</p>
+	</form>
+</div>
+<% } %>
 
 <div id="edit-remarks" class="section">
 	<h2>Remarks</h2>

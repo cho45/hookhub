@@ -185,14 +185,20 @@ class AppHttpRouter extends HttpRouter {
 
 		val hook = Hook.find(c.req.param("id").toInt).getOrElse(throw new NotFound)
 		c.stash("hook") = hook
-		c.req.method match {
-			case "POST" => {
+		(c.req.method, c.req.param.getOrElse("mode", "create")) match {
+			case ("POST", "create") => {
+				c.requireSid
 				val title = c.req.param("title")
 				val code  = c.req.param("code")
 				hook.title = title
 				hook.code  = code
 				hook.save
 				c.redirect("/" + c.user.getEmail + "/hook/" + hook.key.getId)
+			}
+			case ("POST", "delete") => {
+				c.requireSid
+				hook.delete
+				c.redirect("/" + c.user.getEmail + "/")
 			}
 			case _ => { }
 		}
