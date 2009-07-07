@@ -1,7 +1,7 @@
 <div class="hook">
 	<div class="title">
 		<a href="/<%= user %>/hook/<%= hook.key().getId() %>">
-			<%= hook.title() %>
+			<%= String(hook.title()) || "Untitled" %>
 		</a>
 
 		<% if (hook.user() == user) { %>
@@ -11,7 +11,9 @@
 		<% } %>
 	</div>
 	<div class="author">
-		<img src="<%= v.icon(hook.user()) %>" width="60" height="60" alt="<%= v.name(hook.user()) %>"/>
+		<a href="/<%= hook.user() %>/">
+			<img src="<%= v.icon(hook.user()) %>" width="60" height="60" alt="<%= v.name(hook.user()) %>"/>
+		</a>
 	</div>
 	<div class="code">
 		<pre><%= hook.code() %></pre>
