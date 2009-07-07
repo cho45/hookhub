@@ -13,8 +13,12 @@ class HttpRequestDispatcher extends Filter {
 		val routerName = filterConfig.getInitParameter("router");
 		val klass  = Class.forName(routerName)
 
+		println(filterConfig.getServletContext.getServerInfo)
+
 		static = filterConfig.getInitParameter("static").r
 		router = klass.newInstance.asInstanceOf[HttpRouter];
+
+		router.debug = filterConfig.getServletContext.getServerInfo.containsSlice("Development")
 
 		println("initialized: " + router);
 		println("static path: " + static);

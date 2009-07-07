@@ -57,7 +57,16 @@ class AppHttpRouter extends HttpRouter {
 		def user () = {
 			US.getCurrentUser
 		}
-		
+
+
+		def absolute (path:String):String = {
+			if (c.stash("_debug").asInstanceOf[Boolean]) {
+				"http://localhost:8080" + path
+			} else {
+				"http://hookhub.appspot.com/" + path
+			}
+		}
+
 		val rhino = new RhinoView[MyContext]
 		def view (name:String) = {
 			if (c.req.param.contains("user")) {

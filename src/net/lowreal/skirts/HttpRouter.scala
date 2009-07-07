@@ -32,10 +32,6 @@ class Context (val req:Request, val res:Response, val stash:HashMap[String, Any]
 		throw new Redirect(path)
 	}
 
-	def absolute (path:String):String = {
-		"http://localhost:8080" + path
-	}
-
 	def file (path:String) = {
 		val file = new File(path)
 		val fis  = new FileInputStream(file)
@@ -60,6 +56,7 @@ trait HttpRouter {
 
 	val routing = new ArrayBuffer[Route]
 	val regdefs = new HashMap[String, String]
+	var debug   = false
 
 	implicit def str2mystr (s:String) = new MyString(s)
 
@@ -85,6 +82,7 @@ trait HttpRouter {
 		val req = new Request(req0)
 		val res = new Response(res0)
 		val ctx = new Context(req, res, new HashMap)
+		ctx.stash("_debug") = debug
 
 		try {
 			for (r <- routing) {
