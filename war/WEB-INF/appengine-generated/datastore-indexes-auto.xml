@@ -1,14 +1,8 @@
-<!-- Indices written at Tue, 7 Jul 2009 10:15:46 UTC -->
+<!-- Indices written at Tue, 7 Jul 2009 11:07:39 UTC -->
 
 <datastore-indexes>
 
     <!-- Used 1 time in query history -->
-    <datastore-index kind="net.lowreal.hookhub.Config$" ancestor="false" source="auto">
-        <property name="user" direction="asc"/>
-        <property name="key" direction="asc"/>
-    </datastore-index>
-
-    <!-- Used 3 times in query history -->
     <datastore-index kind="net.lowreal.hookhub.Hook$" ancestor="false" source="auto">
         <property name="user" direction="asc"/>
         <property name="created" direction="desc"/>

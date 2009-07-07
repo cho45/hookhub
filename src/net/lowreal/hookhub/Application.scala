@@ -29,13 +29,22 @@ class AppHttpRouter extends HttpRouter {
 		}
 
 		def requireUser () = {
+			c.requireAdmin // XXX :
 			val user = US.getCurrentUser
 			if (user == null) {
 				throw new Redirect(loginURL)
 			}
 		}
 
+		def requireAdmin () = {
+			println(US.isUserAdmin)
+			if (! US.isUserAdmin) {
+				throw new Redirect(loginURL)
+			}
+		}
+
 		def requireUserIsAuthor () = {
+			c.requireAdmin // XXX :
 			if (!userIsAuthor) {
 				throw new Redirect("/")
 			}
@@ -80,6 +89,8 @@ class AppHttpRouter extends HttpRouter {
 	}
 
 	route("/hook/:token") { c => 
+		c.requireAdmin
+
 		val token  = c.req.param("token")
 		val hook   = Hook.find('token -> token).getOrElse(throw new NotFound)
 		val stash  = new HashMap[String, Any]
@@ -132,6 +143,7 @@ class AppHttpRouter extends HttpRouter {
 	}
 
 	route("/:user/hook/new") { c => 
+		c.requireUserIsAuthor
 		c.req.method match {
 			case "POST" => {
 				val code  = c.req.param("code")
@@ -160,6 +172,8 @@ class AppHttpRouter extends HttpRouter {
 	}
 
 	route("/:user/hook/:id/edit") { c => 
+		c.requireUserIsAuthor
+
 		val hook = Hook.find(c.req.param("id").toInt).getOrElse(throw new NotFound)
 		c.stash("hook") = hook
 		c.req.method match {
@@ -173,7 +187,7 @@ class AppHttpRouter extends HttpRouter {
 			case _ => { }
 		}
 
-	c.view("hook.edit")
+		c.view("hook.edit")
 	}
 
 	route("/:user/config") { c => 
