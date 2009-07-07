@@ -83,6 +83,8 @@ form input.text:focus {
 }
 
 .hook {
+	clear: both;
+	margin: 30px 0;
 }
 
 .hook .title {
@@ -118,6 +120,9 @@ form input.text:focus {
 
 .hook .author {
 	float: left;
+}
+
+.hook .author img {
 }
 
 .hook .code {
