@@ -3,9 +3,9 @@
 <form action="" method="post">
 	<dl>
 		<dt>Title</dt>
-		<dd><input type="text" name="title" value="<%= hook.param('title') || "" %>"/></dd>
+		<dd><input type="text" name="title" value="<%= hook.title() || "" %>"/></dd>
 		<dt>Code</dt>
-		<dd><textarea name="code" cols="50" rows="20"><%= hook.param('code') || "" %></textarea></dd>
+		<dd><textarea name="code" cols="50" rows="20"><%= hook.code() || "" %></textarea></dd>
 	</dl>
 	<p>
 	<input type="hidden" name="id" value="<%= hook.key().getId() || "" %>"/>

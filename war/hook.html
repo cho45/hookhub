@@ -2,16 +2,16 @@
 <% hook = stash("hook") %>
 <h2>
 	Hook::
-	<%= hook.param('title') %>
+	<%= hook.title() %>
 
 	<a href="/<%= author %>/hook/<%= hook.key().getId() %>/edit">Edit</a>
 </h2>
-<pre><%= hook.param('code') %></pre>
-<pre><%= hook.param('result') %></pre>
+<pre><%= hook.code() %></pre>
+<pre><%= hook.result() %></pre>
 
 <% if (c.userIsAuthor()) { %>
 <label for="hook-uri">Hook URL::</label>
-<input type="text" id="hook-uri" value="<%= c.absolute("/hook/" + hook.param('token')) %>" size="80" onclick="this.select()" onfocus="this.select()"/>
+<input type="text" id="hook-uri" value="<%= c.absolute("/hook/" + hook.token()) %>" size="80" onclick="this.select()" onfocus="this.select()"/>
 <% } %>
 
 <%=== v.render('_footer', c) %>

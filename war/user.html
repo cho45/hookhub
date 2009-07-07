@@ -10,7 +10,7 @@
 	<% hooks = stash('hooks') %>
 	<% for (var i = 0; i < hooks.length(); i++) { var hook = hooks.apply(i) %>
 	<div>
-		<a href="/<%= author %>/hook/<%= hook.key().getId() %>"><%= hook.param('title') %></a>
+		<a href="/<%= author %>/hook/<%= hook.key().getId() %>"><%= hook.title() %></a>
 	</div>
 	<% } %>
 

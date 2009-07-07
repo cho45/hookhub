@@ -2,8 +2,8 @@
 <h2>Config</h2>
 <form action="" method="post">
 	<dl>
-		<dt>key</dt>
-		<dd><input type="text" name="key" size="20" value=""/></dd>
+		<dt>name</dt>
+		<dd><input type="text" name="name" size="20" value=""/></dd>
 		<dt>value</dt>
 		<dd><input type="text" name="value" size="20" value=""/></dd>
 	</dl>
@@ -16,7 +16,7 @@
 <table>
 	<thead>
 		<tr>
-			<th>Key</th>
+			<th>name</th>
 			<th>Value</th>
 			<th></th>
 		</tr>
@@ -25,8 +25,8 @@
 		<% configs = stash('configs') %>
 		<% for (var i = 0; i < configs.length(); i++) { var config = configs.apply(i) %>
 		<tr>
-			<td><%= config.param('key') %></td>
-			<td><%= config.param('value') %></td>
+			<td><%= config.name() %></td>
+			<td><%= config.value() %></td>
 			<td>
 				<form action="" method="post">
 					<span>

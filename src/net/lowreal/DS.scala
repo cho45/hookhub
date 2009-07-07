@@ -12,13 +12,15 @@ class DS [T <: DS[T]] () {
 	// def _entity_= (e:Entity) = entity = Entity
 
 	// class method
-	def create (args: (Symbol, Any)*) = {
-		val ret = this.getClass.newInstance.asInstanceOf[T]
+	def create ():T = {
+		this.getClass.newInstance.asInstanceOf[T]
+	}
 
+	def create (args: (Symbol, Any)*):T = {
+		val ret = create()
 		for ( (key, value) <- args) {
 			ret(key) = value
 		}
-
 		ret
 	}
 
@@ -73,23 +75,18 @@ class DS [T <: DS[T]] () {
 
 	def key = entity.getKey
 
-	def update (key:Symbol, value:Any):Unit = {
+	protected def update (key:Symbol, value:Any):Unit = {
 		entity.setProperty(key.name, value)
 	}
 
-	def apply (key:Symbol):Any = {
-		entity.getProperty(key.name)
+	protected def apply (key:Symbol, ifnone: => Any):Any = {
+		val ret = entity.getProperty(key.name)
+		if (ret == null) return ifnone
+		ret
 	}
 
-	def param (key:String):Any = {
-		apply(Symbol(key))
-	}
-
-	def param (args: (Symbol, Any)*):Any = {
-		for ( (key, value) <- args) {
-			update(key, value)
-		}
-		args
+	protected def param (key:String, ifnone: => Any):Any = {
+		apply(Symbol(key), ifnone)
 	}
 
 	def save ():T = {

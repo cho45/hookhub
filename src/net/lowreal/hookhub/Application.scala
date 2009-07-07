@@ -37,7 +37,6 @@ class AppHttpRouter extends HttpRouter {
 		}
 
 		def requireAdmin () = {
-			println(US.isUserAdmin)
 			if (! US.isUserAdmin) {
 				throw new Redirect(loginURL)
 			}
@@ -95,29 +94,30 @@ class AppHttpRouter extends HttpRouter {
 		val hook   = Hook.find('token -> token).getOrElse(throw new NotFound)
 		val stash  = new HashMap[String, Any]
 		val config = new HashMap[String, String]
-		for (c <- Config.select('user -> hook('user))) {
-			config(c('key).asInstanceOf[String]) = c('value).asInstanceOf[String]
+		for (c <- Config.select('user -> hook.user)) {
+			config(c.name) = c.value
 		}
 		stash += "config" -> config
 		stash += "params" -> c.req.param
-		stash += "user"   -> hook('user).asInstanceOf[String]
+		stash += "user"   -> hook.user
 		stash += "id"     -> hook.key.getId
 		
 		try {
-			val res = HookRunner.run(hook('code).asInstanceOf[String], stash, c.file("js/init.js"))
-			hook.param('result -> res.take(500).toString)
+			val res = HookRunner.run(hook.code, stash, c.file("js/init.js"))
+			hook.result = res.take(500).toString
+			hook.last_hooked = new Date()
 			hook.save
 			c.res.code(200)
 			c.res.content("ok: " + res)
 		} catch {
 			case e:RhinoException => {
-				hook.param('result -> e.details.take(500).toString)
+				hook.result = e.details.take(500).toString
 				hook.save
 				c.res.code(500)
 				c.res.content("error:" + e.details + " " + e.sourceName + ":" + e.lineNumber)
 			}
 			case e:TimeoutError => {
-				hook.param('result -> "TimeoutError")
+				hook.result = "timeout"
 				hook.save
 				c.res.code(500)
 				c.res.content("timeout")
@@ -148,21 +148,20 @@ class AppHttpRouter extends HttpRouter {
 			case "POST" => {
 				val code  = c.req.param("code")
 				val title = c.req.param("title")
-				val hook  = Hook.create(
-					'user      -> c.user.getEmail,
-					'title     -> title,
-					'code      -> code,
-					'result    -> "",
-					'token     -> Hook.randomToken,
-					'created   -> new Date()
-				)
+				val hook  = Hook.create
+				hook.user    = c.user.getEmail
+				hook.title   = title
+				hook.result  = ""
+				hook.code    = code
+				hook.created = new Date
+				hook.updateToken
 				hook.save
 				c.redirect("/" + c.user.getEmail + "/hook/" + hook.key.getId)
 			}
 			case _ => { }
 		}
 
-		c.stash("hook") = new Hook;
+		c.stash("hook") = Hook.create
 		c.view("hook.edit")
 	}
 
@@ -180,7 +179,8 @@ class AppHttpRouter extends HttpRouter {
 			case "POST" => {
 				val title = c.req.param("title")
 				val code  = c.req.param("code")
-				hook.param('title -> title, 'code -> code)
+				hook.title = title
+				hook.code  = code
 				hook.save
 				c.redirect("/" + c.user.getEmail + "/hook/" + hook.key.getId)
 			}
@@ -197,10 +197,10 @@ class AppHttpRouter extends HttpRouter {
 			case ("POST", "create") => {
 				c.requireSid
 
-				val key    = c.req.param("key")
+				val name   = c.req.param("name")
 				val value  = c.req.param("value")
-				val config = Config.ensure('user -> c.user.getEmail, 'key -> key)
-				config.param('value -> value)
+				val config = Config.ensure('user -> c.user.getEmail, 'name -> name)
+				config.value = value
 				config.save
 			}
 			case ("POST", "delete") => {
@@ -213,7 +213,7 @@ class AppHttpRouter extends HttpRouter {
 			case _ => { }
 		}
 
-		c.stash("configs") = Config.select('user -> c.user.getEmail, 'order -> 'key).toList
+		c.stash("configs") = Config.select('user -> c.user.getEmail, 'order -> 'name).toList
 		c.view("user/config")
 	}
 }
