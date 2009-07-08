@@ -11,8 +11,8 @@
 		<% } %>
 	</div>
 	<div class="author">
-		<a href="/<%= hook.user() %>/">
-			<img src="<%= v.icon(hook.user()) %>" width="60" height="60" alt="<%= v.name(hook.user()) %>"/>
+		<a href="/<%= hook.user().nick() %>/">
+			<img src="<%= hook.user().icon() %>" width="60" height="60" alt="<%= hook.user().nick() %>"/>
 		</a>
 	</div>
 	<div class="code">

@@ -115,7 +115,6 @@ class AppHttpRouter extends HttpRouter {
 				if (UserInfo.find('nick -> nick).isEmpty) {
 					c.user.nick = nick
 					c.user.save
-					println(c.user.entity)
 					c.redirect("/")
 				} else {
 					c.stash("message") = nick + " is already used."
@@ -129,7 +128,7 @@ class AppHttpRouter extends HttpRouter {
 
 	route("/my") { c => 
 		c.requireUser
-		c.res.redirect("/" + c.user.email + "/")
+		c.res.redirect("/" + c.user.nick + "/")
 	}
 
 	route("/hook/:token") { c => 
@@ -139,7 +138,7 @@ class AppHttpRouter extends HttpRouter {
 		val hook   = Hook.find('token -> token).getOrElse(throw new NotFound)
 		val stash  = new HashMap[String, Any]
 		val config = new HashMap[String, String]
-		for (c <- Config.select('user -> hook.user)) {
+		for (c <- Config.select('user -> hook.user.email)) {
 			config(c.name) = c.value
 		}
 		stash += "config" -> config
@@ -183,7 +182,9 @@ class AppHttpRouter extends HttpRouter {
 			}
 		}
 
-		c.stash("hooks") = Hook.select('user -> c.req.param("user"), 'order -> ('created, 'desc)).toList
+		val user = UserInfo.find('nick -> c.req.param("user")).getOrElse(throw new NotFound)
+
+		c.stash("hooks") = Hook.select('user -> user.email, 'order -> ('created, 'desc)).toList
 		c.view("user")
 	}
 
@@ -194,14 +195,14 @@ class AppHttpRouter extends HttpRouter {
 				val code  = c.req.param("code")
 				val title = c.req.param("title")
 				val hook  = Hook.create
-				hook.user    = c.user.email
+				hook.user    = c.user
 				hook.title   = title
 				hook.result  = ""
 				hook.code    = code
 				hook.created = new Date
 				hook.updateToken
 				hook.save
-				c.redirect("/" + c.user.email + "/hook/" + hook.key.getId)
+				c.redirect("/" + c.user.nick + "/hook/" + hook.key.getId)
 			}
 			case _ => { }
 		}
@@ -228,12 +229,12 @@ class AppHttpRouter extends HttpRouter {
 				hook.title = title
 				hook.code  = code
 				hook.save
-				c.redirect("/" + c.user.email + "/hook/" + hook.key.getId)
+				c.redirect("/" + c.user.nick + "/hook/" + hook.key.getId)
 			}
 			case ("POST", "delete") => {
 				c.requireSid
 				hook.delete
-				c.redirect("/" + c.user.email + "/")
+				c.redirect("/" + c.user.nick + "/")
 			}
 			case _ => { }
 		}
@@ -254,14 +255,14 @@ class AppHttpRouter extends HttpRouter {
 				config.value = value
 				config.save
 
-				c.redirect("/" + c.user.email + "/config")
+				c.redirect("/" + c.user.nick + "/config")
 			}
 			case ("POST", "delete") => {
 				c.requireSid
 
 				val config = Config.find(c.req.param("id").toInt).getOrElse(throw new NotFound)
 				config.delete
-				c.redirect("/" + c.user.email + "/config")
+				c.redirect("/" + c.user.nick + "/config")
 			}
 			case _ => { }
 		}

@@ -14,8 +14,8 @@ class Hook extends DS[Hook]() {
 		UUID.randomUUID().toString().replaceAll("-", "")
 	}
 
-	def user_= (o:String) = update('user, o)
-	def user = apply('user, "").asInstanceOf[String]
+	def user_= (o:UserInfo) = update('user, o.email)
+	def user = UserInfo.find('email -> apply('user, "")).getOrElse(null)
 
 	def title_= (o:String) = update('title, o)
 	def title = apply('title, "").asInstanceOf[String]
@@ -49,6 +49,9 @@ class Config extends DS[Config]() {
 	def value = apply('value, "").asInstanceOf[String]
 }
 
+import java.util._
+import java.io._
+import java.security._
 object UserInfo extends UserInfo()
 class UserInfo extends DS[UserInfo]() {
 	def nick_= (o:String) = update('nick, o)
@@ -59,6 +62,19 @@ class UserInfo extends DS[UserInfo]() {
 
 	def config = Config.select('user -> email)
 	def hooks  = Hook.select('user -> email)
+
+	def icon ():String = {
+		def hex (array:Array[byte]):String = {        
+			val sb = new StringBuffer();        
+			for (c <- array) {            
+				sb.append(Integer.toHexString((c  & 0xFF) | 0x100).substring(1, 3));        
+			}        
+			sb.toString
+		}
+
+		val md = MessageDigest.getInstance("MD5");
+		"http://www.gravatar.com/avatar/" + hex(md.digest(email.getBytes("CP1252"))) + "?s=60"
+	}
 }
 
 
