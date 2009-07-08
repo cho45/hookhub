@@ -143,7 +143,7 @@ class AppHttpRouter extends HttpRouter {
 		}
 		stash += "config" -> config
 		stash += "params" -> c.req.param
-		stash += "user"   -> hook.user
+		stash += "user"   -> hook.user.nick
 		stash += "id"     -> hook.key.getId
 		
 		try {
