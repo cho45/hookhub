@@ -1,0 +1,15 @@
+<%include= _header %>
+<div id="help" class="section">
+	<h2>Feedback</h2>
+	<form action="" method="post">
+		<dl>
+			<dt>Body (Required):</dt>
+			<dd><textarea cols="50" rows="10" name="body"></textarea></dd>
+		</dl>
+		<p>
+			<input type="hidden" name="sid" value="<%= c.req().session().getId() %>"/>
+			<input type="submit" value="Send" />
+		</p>
+	</form>
+</div>
+<%include= _footer %>

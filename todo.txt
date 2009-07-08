@@ -1,4 +1,6 @@
 
  * request restrictions
  * datastore memcache
+ * といあわせ
+ * comment functions
 

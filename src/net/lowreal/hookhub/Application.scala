@@ -7,6 +7,10 @@ import scala.collection.mutable.{HashMap, ArrayBuffer}
 import net.lowreal.skirts._
 import com.google.appengine.api.users.{User, UserService, UserServiceFactory}
 import java.util.Date
+import java.util.Properties
+
+import com.google.appengine.api.mail._
+// import javax.mail.{AddressException, InternetAddress, MessagingException, MimeMessage, Message, Session, Transport}
 
 import org.mozilla.javascript.RhinoException
 
@@ -86,6 +90,8 @@ class AppHttpRouter extends HttpRouter {
 
 	val US = UserServiceFactory.getUserService
 
+	this reg ":static" -> """help"""
+
 	before("/*") { c =>
 		if (c.user != null) {
 			c.stash("user") = c.user.nick
@@ -105,16 +111,58 @@ class AppHttpRouter extends HttpRouter {
 		c.redirect(US.createLogoutURL("/"))
 	}
 
+	route("/:static") { c =>
+		c.view(c.req.param("static"))
+	}
+
+	route("/feedback") { c =>
+		c.requireUser
+
+		c.req.method match {
+			case "POST" => {
+				c.requireSid
+				val body = c.req.param("body")
+				if (body.length != 0) {
+//					val session = javax.mail.Session.getDefaultInstance(new Properties, null)
+//					try {
+//						val message = new javax.mail.MimeMessage(session)
+//						message.setFrom(new InternetAddress(c.user.email))
+//						message.addRecipient(Message.RecipientType.TO, new InternetAddress("cho45@lowreal.net"))
+//						message.setSubject("[hookhub] Feedback")
+//						message.setText(body)
+//						Transport.send(message)
+//						c.stash("message") = "Thank you for your feedback!"
+//					} catch {
+//						case _ @ e => {
+//							c.stash("message") = e.getMessage
+//						}
+//					}
+					val MS = MailServiceFactory.getMailService
+					MS.sendToAdmins(new MailService.Message(c.user.email, "cho45@lowreal.net", "[hookhub] Feedback", body))
+					c.stash("message") = "Thank you for your feedback!"
+				} else {
+					c.stash("message") = "Body required"
+				}
+			}
+			case _ => {}
+		}
+		c.view("feedback")
+	}
+
 	route("/register") { c =>
 		c.req.method match {
 			case "POST" => {
 				val nick = c.req.param("nick")
-				if (UserInfo.find('nick -> nick).isEmpty) {
-					c.user.nick = nick
-					c.user.save
-					c.redirect("/")
+				if (nick.length >= 5) {
+					if (UserInfo.find('nick -> nick).isEmpty) {
+						c.user.nick = nick
+						c.user.save
+						c.redirect("/")
+					} else {
+						c.stash("message") = nick + " is already used."
+					}
 				} else {
-					c.stash("message") = nick + " is already used."
+					c.stash("message") = "too short"
 				}
 			}
 			case _ => {
