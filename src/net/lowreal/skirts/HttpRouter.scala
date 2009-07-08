@@ -123,7 +123,7 @@ trait HttpRouter {
 			res.code(200)
 			res.header("Context-Type", "text/plain")
 			dispatch(beforeFilters.toArray, ctx)
-			if (dispatch(routing.toArray, ctx)) {
+			if (! dispatch(routing.toArray, ctx)) {
 				throw new NotFound
 			}
 			dispatch(afterFilters.toArray,  ctx)
