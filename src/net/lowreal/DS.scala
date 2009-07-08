@@ -73,10 +73,17 @@ class DS [T <: DS[T]] () {
 	}
 
 	// find or create with first value
-	def ensure (args: (Symbol, Any)*) = find(args:_*) match {
-		case None      => create(args:_*)
+	def ensureIf (args: (Symbol, Any)*)(ifcreate: T => Unit):T = find(args:_*) match {
+		case None      => {
+			val ret = create(args:_*)
+			ifcreate(ret)
+			ret.save
+			ret
+		}
 		case Some(ret) => ret
 	}
+
+	def ensure (args: (Symbol, Any)*):T = ensureIf(args:_*) { _ => null}
 
 	// instance method
 	def setEntity (e:Entity):T = {

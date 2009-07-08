@@ -48,3 +48,26 @@ class Config extends DS[Config]() {
 	def value_= (o:String) = update('value, o)
 	def value = apply('value, "").asInstanceOf[String]
 }
+
+object UserInfo extends UserInfo()
+class UserInfo extends DS[UserInfo]() {
+	def randomToken ():String = {
+		UUID.randomUUID().toString().replaceAll("-", "")
+	}
+
+	def nick_= (o:String) = update('nick, o)
+	def nick = apply('nick, "").asInstanceOf[String]
+
+	def config = Config.select('user -> email)
+	def hooks  = Hook.select('user -> email)
+	
+	def token_= (o:String) = update('token, o)
+	def token = apply('token, "").asInstanceOf[String]
+
+	def updateToken () {
+		this.token = randomToken
+	}
+}
+
+
+

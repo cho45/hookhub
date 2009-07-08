@@ -33,6 +33,11 @@ def scalac(*args)
 	sh "scalac", *args
 end
 
+def screen_info(i)
+	puts "k:%s\\" % i
+	system("screen", "-X", "echo", i)
+end
+
 def build_all
 	buildtime = File.mtime(".buildtime").to_i rescue 0
 	srcs = src(".scala", "src/").select {|f|
@@ -41,10 +46,18 @@ def build_all
 	ret = nil
 	unless srcs.empty?
 		t = Time.now
+		screen_info "scalac #{srcs.join(' ')}"
 		ret = scalac "-d", "war/WEB-INF/classes", *srcs
+		screen_info "done"
+
+		touch ".buildtime" unless File.exist?(".buildtime")
 		File.utime t, t, ".buildtime"
 	end
 	ret
+rescue => e
+	screen_info e.to_s
+	sleep 3
+	ret = nil
 end
 
 task :default => :run
@@ -59,24 +72,18 @@ task :run => [:build] do
 		Process.kill(:INT, -pid)
 	}
 	loop do
-		begin
-			if !pid || build_all
-				Process.kill(:INT, -pid) if pid
-				pid = fork {
-					Process.setpgrp
-					exec(GAE_SDK + "bin/dev_appserver.sh", "war")
-				}
-			end
-		rescue Exception => e
-			sleep 1
+		if !pid || build_all
+			Process.kill(:INT, -pid) if pid
+			pid = fork {
+				Process.setpgrp
+				exec(GAE_SDK + "bin/dev_appserver.sh", "war")
+			}
 		end
 		sleep 1
 	end
 end
 
-task :build => [:copylibs]
-
-task :build_all => ["war/WEB-INF/classes"] do
+task :build => [:copylibs, "war/WEB-INF/classes"] do
 	build_all
 end
 

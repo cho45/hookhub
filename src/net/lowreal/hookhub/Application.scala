@@ -30,7 +30,7 @@ class AppHttpRouter extends HttpRouter {
 
 		def requireUser () = {
 			c.requireAdmin // XXX :
-			val user = US.getCurrentUser
+			val user = c.user
 			if (user == null) {
 				throw new Redirect(loginURL)
 			}
@@ -51,13 +51,15 @@ class AppHttpRouter extends HttpRouter {
 
 		def userIsAuthor ():Boolean = {
 			if (c.user == null) return false
-			c.user.getEmail == c.req.param("user")
+			c.user.nick == c.req.param("user")
 		}
 
 		def user () = {
-			US.getCurrentUser
+//			UserInfo.ensureIf('email -> u.getEmail) { self =>
+//				self.nick = u.getNickname 
+//			}
+			UserInfo.create
 		}
-
 
 		def absolute (path:String):String = {
 			if (c.stash("_debug").asInstanceOf[Boolean]) {
@@ -94,7 +96,7 @@ class AppHttpRouter extends HttpRouter {
 
 	route("/my") { c => 
 		c.requireUser
-		c.res.redirect("/" + c.user.getEmail + "/")
+		c.res.redirect("/" + c.user.email + "/")
 	}
 
 	route("/hook/:token") { c => 
@@ -159,14 +161,14 @@ class AppHttpRouter extends HttpRouter {
 				val code  = c.req.param("code")
 				val title = c.req.param("title")
 				val hook  = Hook.create
-				hook.user    = c.user.getEmail
+				hook.user    = c.user.email
 				hook.title   = title
 				hook.result  = ""
 				hook.code    = code
 				hook.created = new Date
 				hook.updateToken
 				hook.save
-				c.redirect("/" + c.user.getEmail + "/hook/" + hook.key.getId)
+				c.redirect("/" + c.user.email + "/hook/" + hook.key.getId)
 			}
 			case _ => { }
 		}
@@ -193,12 +195,12 @@ class AppHttpRouter extends HttpRouter {
 				hook.title = title
 				hook.code  = code
 				hook.save
-				c.redirect("/" + c.user.getEmail + "/hook/" + hook.key.getId)
+				c.redirect("/" + c.user.email + "/hook/" + hook.key.getId)
 			}
 			case ("POST", "delete") => {
 				c.requireSid
 				hook.delete
-				c.redirect("/" + c.user.getEmail + "/")
+				c.redirect("/" + c.user.email + "/")
 			}
 			case _ => { }
 		}
@@ -215,23 +217,23 @@ class AppHttpRouter extends HttpRouter {
 
 				val name   = c.req.param("name")
 				val value  = c.req.param("value")
-				val config = Config.ensure('user -> c.user.getEmail, 'name -> name)
+				val config = Config.ensure('user -> c.user.email, 'name -> name)
 				config.value = value
 				config.save
 
-				c.redirect("/" + c.user.getEmail + "/config")
+				c.redirect("/" + c.user.email + "/config")
 			}
 			case ("POST", "delete") => {
 				c.requireSid
 
 				val config = Config.find(c.req.param("id").toInt).getOrElse(throw new NotFound)
 				config.delete
-				c.redirect("/" + c.user.getEmail + "/config")
+				c.redirect("/" + c.user.email + "/config")
 			}
 			case _ => { }
 		}
 
-		c.stash("configs") = Config.select('user -> c.user.getEmail, 'order -> 'name).toList
+		c.stash("configs") = Config.select('user -> c.user.email, 'order -> 'name).toList
 		c.view("user/config")
 	}
 }
