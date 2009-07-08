@@ -23,7 +23,7 @@
 
 	<% if (c.userIsAuthor()) { %>
 	<div class="section">
-		<h3>Hook URI</h3>
+		<h3>Hook URI <span class="less">(only you can see)</span></h3>
 		<p>
 			<input type="text" value="<%= c.absolute("/hook/" + hook.token()) %>" size="80" onclick="this.select()" onfocus="this.select()" class="text"/>
 		</p>

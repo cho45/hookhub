@@ -218,6 +218,8 @@ class AppHttpRouter extends HttpRouter {
 				val config = Config.ensure('user -> c.user.getEmail, 'name -> name)
 				config.value = value
 				config.save
+
+				c.redirect("/" + c.user.getEmail + "/config")
 			}
 			case ("POST", "delete") => {
 				c.requireSid
