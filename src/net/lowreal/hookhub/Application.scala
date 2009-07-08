@@ -77,7 +77,7 @@ class AppHttpRouter extends HttpRouter {
 	}
 
 	route("/") { c =>
-		c.stash("hooks") = Hook.select('order -> ('last_hooked, 'desc)).take(10).toList
+		c.stash("hooks") = Hook.select('order -> ('last_hooked, 'desc), 'limit -> 10).toList
 		c.view("index")
 	}
 

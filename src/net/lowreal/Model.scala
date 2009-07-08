@@ -7,6 +7,7 @@ import com.google.appengine.api.datastore._
 import java.util.UUID
 import java.util.Date
 
+object Hook extends Hook()
 class Hook extends DS[Hook]() {
 
 	def randomToken ():String = {
@@ -38,8 +39,8 @@ class Hook extends DS[Hook]() {
 		this.token = randomToken
 	}
 }
-object Hook extends Hook()
 
+object Config extends Config()
 class Config extends DS[Config]() {
 	def name_= (o:String) = update('name, o)
 	def name = apply('name, "").asInstanceOf[String]
@@ -47,4 +48,3 @@ class Config extends DS[Config]() {
 	def value_= (o:String) = update('value, o)
 	def value = apply('value, "").asInstanceOf[String]
 }
-object Config extends Config()

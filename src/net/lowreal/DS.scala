@@ -1,6 +1,7 @@
 package net.lowreal.skirts
 
 import com.google.appengine.api.datastore._
+import com.google.appengine.api.datastore.FetchOptions.Builder._
 import scala.collection.jcl.Conversions._
 
 class DS [T <: DS[T]] () {
@@ -26,6 +27,7 @@ class DS [T <: DS[T]] () {
 
 	def select (args: (Symbol, Any)*):Iterator[T] = {
 		val query = new Query(entityName)
+		val fopts = withChunkSize(FetchOptions.DEFAULT_CHUNK_SIZE)
 		for ( (key, value) <- args) {
 			(key, value) match {
 				case ('order, key:Symbol) => {
@@ -33,6 +35,15 @@ class DS [T <: DS[T]] () {
 				}
 				case ('order, (key:Symbol, sort:Symbol)) => {
 					query.addSort(key.name, if (sort == 'desc) Query.SortDirection.DESCENDING else Query.SortDirection.ASCENDING )
+				}
+				case ('limit, n:Int) => {
+					fopts.limit(n)
+				}
+				case ('offset, n:Int) => {
+					fopts.offset(n)
+				}
+				case ('chunkSize, n:Int) => {
+					fopts.chunkSize(n)
 				}
 				case _ => {
 					query.addFilter(key.name, Query.FilterOperator.EQUAL, value)
