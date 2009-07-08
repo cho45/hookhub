@@ -70,8 +70,8 @@ Global = (function () {
 		return null;
 	}
 
-	this.user   = stash("user");
-	this.author = stash("author");
+	this.user   = String(stash("user"));
+	this.author = String(stash("author"));
 
 	return this;
 })();

@@ -24,6 +24,10 @@ class HookhubContext (c:Context) extends Context(c.req, c.res, c.stash) {
 		val user = c.user
 		if (user == null) {
 			c.redirect("/login")
+		} else {
+			if (user.nick.isEmpty) {
+				c.redirect("/register")
+			}
 		}
 	}
 
@@ -41,6 +45,7 @@ class HookhubContext (c:Context) extends Context(c.req, c.res, c.stash) {
 	}
 
 	def userIsAuthor ():Boolean = {
+		c.requireUser
 		if (c.user == null) return false
 		c.user.nick == c.req.param("user")
 	}
@@ -50,14 +55,6 @@ class HookhubContext (c:Context) extends Context(c.req, c.res, c.stash) {
 			val u = US.getCurrentUser
 			if (u != null) {
 				val ret = UserInfo.ensure('email -> u.getEmail)
-				if (ret.nick.isEmpty) {
-					c.req.path match {
-						case "/register" => {}
-						case "/logout"   => {}
-						case "/login"    => {}
-						case _ => c.redirect("/register")
-					}
-				}
 				c.stash("_user") = ret
 				ret
 			} else {

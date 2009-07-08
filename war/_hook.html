@@ -1,6 +1,6 @@
 <div class="hook">
 	<div class="title">
-		<a href="/<%= user %>/hook/<%= hook.key().getId() %>">
+		<a href="/<%= hook.user().nick() %>/hook/<%= hook.key().getId() %>">
 			<%= String(hook.title()) || "Untitled" %>
 		</a>
 

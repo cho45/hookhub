@@ -20,11 +20,11 @@
 					Hello
 					<% if (String(c.user().nick())) { %>
 						<a href="/<%= user %>/"><%= user %></a>
-						<a href="/<%= user %>/hook/new">New</a>
-						<a href="/<%= user %>/config">Config</a>
 					<% } else { %>
 						guest
 					<% } %>
+					<a href="/<%= user || 'guest' %>/hook/new">New</a>
+					<a href="/<%= user || 'guest' %>/config">Config</a>
 					<a href="/logout">Logout</a>
 				<% } else { %>
 					<a href="/login">Login</a>
