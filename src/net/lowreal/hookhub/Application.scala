@@ -43,13 +43,13 @@ class HookhubContext (c:Context) extends Context(c.req, c.res, c.stash) {
 
 	def requireUserIsAuthor () = {
 		c.requireAdmin // XXX :
+		c.requireUser
 		if (!userIsAuthor) {
 			throw new Redirect("/")
 		}
 	}
 
 	def userIsAuthor ():Boolean = {
-		c.requireUser
 		if (c.user == null) return false
 		c.user.nick == c.req.param("user")
 	}
