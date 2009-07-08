@@ -1,4 +1,4 @@
 
- * Google Auth -> OpenId
  * request restrictions
+ * datastore memcache
 
