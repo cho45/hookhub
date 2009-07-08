@@ -46,16 +46,24 @@ class HookhubContext (c:Context) extends Context(c.req, c.res, c.stash) {
 	}
 
 	def user ():UserInfo = {
-		val u = US.getCurrentUser
-		if (u != null) {
-			val ret = UserInfo.ensure('email -> u.getEmail)
-			if (ret.nick.isEmpty) {
-				c.redirect("/register")
+		c.stash.getOrElse("_user", {
+			val u = US.getCurrentUser
+			if (u != null) {
+				val ret = UserInfo.ensure('email -> u.getEmail)
+				if (ret.nick.isEmpty) {
+					c.req.path match {
+						case "/register" => {}
+						case "/logout"   => {}
+						case "/login"    => {}
+						case _ => c.redirect("/register")
+					}
+				}
+				c.stash("_user") = ret
+				ret
+			} else {
+				null
 			}
-			ret
-		} else {
-			null
-		}
+		}).asInstanceOf[UserInfo]
 	}
 
 	def absolute (path:String):String = {
@@ -100,16 +108,24 @@ class AppHttpRouter extends HttpRouter {
 		c.redirect(US.createLogoutURL("/"))
 	}
 
-//	route("/register") { c =>
-//		c.req.method match {
-//			case "POST" => {
-//				c.res.content("post");
-//			}
-//			case _ => {
-//				c.res.content("get");
-//			}
-//		}
-//	}
+	route("/register") { c =>
+		c.req.method match {
+			case "POST" => {
+				val nick = c.req.param("nick")
+				if (UserInfo.find('nick -> nick).isEmpty) {
+					c.user.nick = nick
+					c.user.save
+					println(c.user.entity)
+					c.redirect("/")
+				} else {
+					c.stash("message") = nick + " is already used."
+				}
+			}
+			case _ => {
+			}
+		}
+		c.view("register")
+	}
 
 	route("/my") { c => 
 		c.requireUser

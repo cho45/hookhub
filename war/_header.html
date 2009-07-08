@@ -17,14 +17,21 @@
 			<h1 id="logo"><a href="/">HookHub</a></h1>
 			<div id="navigation">
 				<% if (c.user()) { %>
-				Hello
-				<a href="/<%= user.nick() %>/"><%= user.nick() %></a>
-				<a href="/<%= user.nick() %>/hook/new">New</a>
-				<a href="/<%= user.nick() %>/config">Config</a>
-				<a href="/logout">Logout</a>
+					Hello
+					<% if (String(c.user().nick())) { %>
+						<a href="/<%= user %>/"><%= user %></a>
+						<a href="/<%= user %>/hook/new">New</a>
+						<a href="/<%= user %>/config">Config</a>
+					<% } else { %>
+						guest
+					<% } %>
+					<a href="/logout">Logout</a>
 				<% } else { %>
-				<a href="/login">Login</a>
+					<a href="/login">Login</a>
 				<% } %>
 			</div>
 
 			<div id="content">
+				<% if (stash("message")) { %>
+					<%= stash("message") %>
+				<% } %>
