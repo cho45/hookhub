@@ -70,7 +70,7 @@ Global = (function () {
 		return null;
 	}
 
-	this.user = c.user() ? c.user().getEmail() : null;
+	this.user   = c.user() ? c.user().nick() : null;
 	this.author = stash("author");
 
 	return this;

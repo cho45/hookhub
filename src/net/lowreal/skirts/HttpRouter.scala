@@ -24,7 +24,9 @@ class MyString (s:String) {
 
 
 import java.io._
-class Context (val req:Request, val res:Response, val stash:HashMap[String, Any] ) {
+class Context (val req:Request, val res:Response, val stash:HashMap[String, Any]) {
+	var debug = false
+
 	def redispatch (path:String) {
 	}
 
@@ -52,17 +54,11 @@ class NotFound () extends RequestException(404)
 class Success  () extends RequestException(200)
 
 trait HttpRouter {
-	class Route (val regexp:Regex, val source:String, val capture:Array[String], val handler:(Context => Unit)) extends Throwable
-
-	val routing = new ArrayBuffer[Route]
-	val regdefs = new HashMap[String, String]
-	var debug   = false
-
 	implicit def str2mystr (s:String) = new MyString(s)
 
-	def route (source:String)(handler:Context => Unit) = {
-		val capture = new ArrayBuffer[String]
-		val regexp  = ("^" + source.replace("""([:*])(\w+)""",
+	class Route (val source:String, val handler:(Context => Unit)) extends Throwable {
+		var capture = new ArrayBuffer[String]
+		val regexp  = ("^" + source.replace("""([:*])(\w*)""",
 			(m:Matcher) => {
 				val t = m.group(1)
 				val n = m.group(2)
@@ -70,41 +66,76 @@ trait HttpRouter {
 				"(" + ( regdefs.getOrElse(m.group(0), if (t == "*") ".*" else "[^/]+" ) ) + ")"
 			}
 		) + "$").r
+	}
 
-		routing += new Route(regexp, source, capture.toArray, handler);
+	val beforeFilters = new ArrayBuffer[Route]
+	val afterFilters  = new ArrayBuffer[Route]
+
+	val routing = new ArrayBuffer[Route]
+
+	val regdefs = new HashMap[String, String]
+	var debug   = false
+
+	def route (source:String)(handler:Context => Unit) = {
+		routing += new Route(source, handler)
+	}
+
+	def before (source:String)(handler:Context => Unit) = {
+		beforeFilters += new Route(source, handler)
+	}
+
+	def after (source:String)(handler:Context => Unit) = {
+		afterFilters  += new Route(source, handler)
 	}
 
 	def reg (o:(String, String)) = {
 		regdefs += o
 	}
 
-	def dispatch (req0: HttpServletRequest, res0: HttpServletResponse):Unit = {
-		val req = new Request(req0)
-		val res = new Response(res0)
-		val ctx = new Context(req, res, new HashMap)
-		ctx.stash("_debug") = debug
-
+	def dispatch (routing:Array[Route], ctx: Context):Boolean = {
 		try {
 			for (r <- routing) {
-				val m = r.regexp.findFirstMatchIn(req.path)
+				val m = r.regexp.findFirstMatchIn(ctx.req.path)
 				if (m.isDefined) {
+					val rcaptur       = r.capture.toArray
 					val capture:Match = m.get
-					for ( (key, value) <- r.capture.zip(capture.subgroups.toArray)) {
-						req.param(key) = value
+					for ( (key, value) <- rcaptur.zip(capture.subgroups.toArray)) {
+						ctx.req.param(key) = value
 					}
-					res.code(200)
-					res.header("Context-Type", "text/plain")
 					r.handler(ctx)
 					throw new Success
 				}
 			}
-			throw new NotFound();
+			throw new NotFound
+		} catch {
+			case e:Success  => true
+			case e:NotFound => false
+		}
+	}
+
+	def dispatch (req0: HttpServletRequest, res0: HttpServletResponse):Unit = {
+		val req = new Request(req0)
+		val res = new Response(res0)
+		val ctx = new Context(req, res, new HashMap)
+		ctx.debug = debug
+
+		try {
+			res.code(200)
+			res.header("Context-Type", "text/plain")
+			dispatch(beforeFilters.toArray, ctx)
+			if (dispatch(routing.toArray, ctx)) {
+				throw new NotFound
+			}
+			dispatch(afterFilters.toArray,  ctx)
 		} catch {
 			case e:Redirect => {
 				res.code(302)
 				res.header("Location", e.url)
 			}
-			case r:Success => {}
+			case e:NotFound => {
+				res.code(404)
+				res.content("404 Not Found")
+			}
 		}
 	}
 }

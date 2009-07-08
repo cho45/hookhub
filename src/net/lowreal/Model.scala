@@ -58,6 +58,9 @@ class UserInfo extends DS[UserInfo]() {
 	def nick_= (o:String) = update('nick, o)
 	def nick = apply('nick, "").asInstanceOf[String]
 
+	def email_= (o:String) = update('email, o)
+	def email = apply('email, "").asInstanceOf[String]
+
 	def config = Config.select('user -> email)
 	def hooks  = Hook.select('user -> email)
 	

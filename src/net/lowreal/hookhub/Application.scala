@@ -10,77 +10,94 @@ import java.util.Date
 
 import org.mozilla.javascript.RhinoException
 
+class HookhubContext (c:Context) extends Context(c.req, c.res, c.stash) {
+	implicit def ctx2myctx (c:Context) = new HookhubContext(c)
+
+	val US = UserServiceFactory.getUserService
+
+	def requireSid () = {
+		c.req.sessionId == c.req.param("sid")
+	}
+
+	def requireUser () = {
+		c.requireAdmin // XXX :
+		val user = c.user
+		if (user == null) {
+			c.redirect("/login")
+		}
+	}
+
+	def requireAdmin () = {
+		if (! US.isUserAdmin) {
+			c.redirect("/login")
+		}
+	}
+
+	def requireUserIsAuthor () = {
+		c.requireAdmin // XXX :
+		if (!userIsAuthor) {
+			throw new Redirect("/")
+		}
+	}
+
+	def userIsAuthor ():Boolean = {
+		if (c.user == null) return false
+		c.user.nick == c.req.param("user")
+	}
+
+	def user ():UserInfo = {
+		val u = US.getCurrentUser
+		if (u != null) {
+			val ret = UserInfo.ensure('email -> u.getEmail)
+			if (ret.nick.isEmpty) {
+				c.redirect("/register")
+			}
+			ret
+		} else {
+			null
+		}
+	}
+
+	def absolute (path:String):String = {
+		if (c.debug) {
+			"http://localhost:8080" + path
+		} else {
+			"http://hookhub.appspot.com/" + path
+		}
+	}
+
+	val rhino = new RhinoView[HookhubContext]
+	def view (name:String) = {
+		if (c.req.param.contains("user")) {
+			c.stash("author") = c.req.param("user")
+		}
+		rhino(name, this)
+	}
+}
+
+
 class AppHttpRouter extends HttpRouter {
-	val US    = UserServiceFactory.getUserService
-	implicit def ctx2myctx (c:Context) = new MyContext(c)
-	class MyContext (c:Context) extends Context(c.req, c.res, c.stash) with Proxy {
-		def self = c
+	implicit def ctx2myctx (c:Context) = new HookhubContext(c)
 
-		def loginURL ():String = {
-			US.createLoginURL(c.req.requestURI)
-		}
+	val US = UserServiceFactory.getUserService
 
-		def logoutURL ():String = {
-			US.createLogoutURL(c.req.requestURI)
-		}
-
-		def requireSid () = {
-			c.req.sessionId == c.req.param("sid")
-		}
-
-		def requireUser () = {
-			c.requireAdmin // XXX :
-			val user = c.user
-			if (user == null) {
-				throw new Redirect(loginURL)
-			}
-		}
-
-		def requireAdmin () = {
-			if (! US.isUserAdmin) {
-				throw new Redirect(loginURL)
-			}
-		}
-
-		def requireUserIsAuthor () = {
-			c.requireAdmin // XXX :
-			if (!userIsAuthor) {
-				throw new Redirect("/")
-			}
-		}
-
-		def userIsAuthor ():Boolean = {
-			if (c.user == null) return false
-			c.user.nick == c.req.param("user")
-		}
-
-		def user () = {
-//			UserInfo.ensureIf('email -> u.getEmail) { self =>
-//				self.nick = u.getNickname 
-//			}
-			UserInfo.create
-		}
-
-		def absolute (path:String):String = {
-			if (c.stash("_debug").asInstanceOf[Boolean]) {
-				"http://localhost:8080" + path
-			} else {
-				"http://hookhub.appspot.com/" + path
-			}
-		}
-
-		val rhino = new RhinoView[MyContext]
-		def view (name:String) = {
-			if (c.req.param.contains("user")) {
-				c.stash("author") = c.req.param("user")
-			}
-			rhino(name, this)
+	before("/*") { c =>
+		if (c.user != null) {
+			c.stash("user") = c.user.nick
 		}
 	}
 
 	route("/") { c =>
 		c.stash("hooks") = Hook.select('order -> ('last_hooked, 'desc), 'limit -> 10).toList
 		c.view("index")
+	}
+
+	route("/login") { c =>
+		c.redirect(US.createLoginURL(c.req.header.getOrElse("Referer", "/")))
+	}
+
+	route("/logout") { c =>
+		c.redirect(US.createLogoutURL("/"))
 	}
 
 //	route("/register") { c =>

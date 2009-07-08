@@ -18,12 +18,12 @@
 			<div id="navigation">
 				<% if (c.user()) { %>
 				Hello
-				<a href="/<%= c.user().getEmail() %>/"><%= c.user().getEmail() %></a>
-				<a href="/<%= user %>/hook/new">New</a>
-				<a href="/<%= user %>/config">Config</a>
-				<a href="<%= c.logoutURL() %>">Logout</a>
+				<a href="/<%= user.nick() %>/"><%= user.nick() %></a>
+				<a href="/<%= user.nick() %>/hook/new">New</a>
+				<a href="/<%= user.nick() %>/config">Config</a>
+				<a href="/logout">Logout</a>
 				<% } else { %>
-				<a href="<%= c.loginURL() %>">Login</a>
+				<a href="/login">Login</a>
 				<% } %>
 			</div>
 
