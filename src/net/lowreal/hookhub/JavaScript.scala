@@ -78,8 +78,6 @@ object HookRunner {
 
 		override def get (name: String, start: Scriptable):Object = (javaObject, name) match {
 			case ( _:Http, "request") => super.get(name, start)
-			case ( _:HashMap[String, String], "apply") => super.get(name, start)
-			case ( _:HashMap[String, String], "keys") => super.get(name, start)
 			case _ => { println(javaObject, name); null }
 		}
 	}
@@ -150,10 +148,7 @@ object HookRunner {
 			ctx.setMaximumInterpreterStackDepth(1000)
 
 			ctx.setClassShutter(new ClassShutter() {
-				def visibleToScripts(fullClassName: String) = fullClassName match {
-					case "net.lowreal.hookhub.HookRunner$Http" => true
-					case _ => false
-				}
+				def visibleToScripts(fullClassName: String) = fullClassName == classOf[Http].getName
 			})
 		//	tx.setSecurityController(new SecurityController() {
 		//	})
@@ -166,6 +161,8 @@ object HookRunner {
 			ctx.evaluateString(scope, init, "<init>", 1, null)
 
 			val result = ctx.evaluateString(scope, source, "<run>", 1, null)
+
+			jsstash.delete("config")
 
 			// ret =  Context.toString(result)
 			val uneval = scope.get("uneval", scope).asInstanceOf[Function]

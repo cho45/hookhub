@@ -7,6 +7,7 @@ import scala.collection.mutable.{HashMap, ArrayBuffer}
 import scala.util.matching.Regex
 import scala.util.matching.Regex.Match
 
+import scala.io.Source
 import scala.collection.jcl._
 
 import java.util.regex.Matcher
@@ -99,7 +100,7 @@ trait HttpRouter {
 				if (m.isDefined) {
 					val rcaptur       = r.capture.toArray
 					val capture:Match = m.get
-					for ( (key, value) <- rcaptur.zip(capture.subgroups.toArray)) {
+					for ( (key, value) <- rcaptur.zip(capture.subgroups.toArray) if key.length > 0) {
 						ctx.req.param(key) = value
 					}
 					r.handler(ctx)
@@ -163,6 +164,15 @@ class Request (req0:HttpServletRequest)  {
 	def session (create:Boolean) = req0.getSession(create)
 	def session ()               = req0.getSession(true)
 	def sessionId ()             = req0.getRequestedSessionId
+
+	private var _body:String = null
+	def body ():String = _body match {
+		case null => {
+			_body = Source.fromInputStream(req0.getInputStream).mkString
+			_body
+		}
+		case _ => _body
+	}
 
 	val param = new HashMap[String, String]
 	for ( (key, value) <- Map(req0.getParameterMap.asInstanceOf[java.util.Map[String, Array[String]]])) {

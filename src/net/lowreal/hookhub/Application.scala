@@ -177,8 +177,6 @@ class AppHttpRouter extends HttpRouter {
 	}
 
 	route("/hook/:token") { c => 
-		c.requireAdmin
-
 		val token  = c.req.param("token")
 		val hook   = Hook.find('token -> token).getOrElse(throw new NotFound)
 		val stash  = new HashMap[String, Any]
@@ -186,10 +184,12 @@ class AppHttpRouter extends HttpRouter {
 		for (c <- Config.select('user -> hook.user.email)) {
 			config(c.name) = c.value
 		}
-		stash += "config" -> config
-		stash += "params" -> c.req.param
-		stash += "user"   -> hook.user.nick
-		stash += "id"     -> hook.key.getId
+		stash += "config"  -> config
+		stash += "params"  -> c.req.param
+		stash += "headers" -> c.req.header
+		stash += "body"    -> c.req.body
+		stash += "user"    -> hook.user.nick
+		stash += "id"      -> hook.key.getId
 		
 		try {
 			val res = HookRunner.run(hook.code, stash, c.file("js/init.js"))

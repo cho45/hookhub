@@ -1,6 +1,23 @@
 
  * request restrictions
+ * email api
  * datastore memcache
- * といあわせ
  * comment functions
+  * comment hooks
+ * fork
+ * previous data
+   * support config write?
+ * some digest support
+   * H-MAC
+   * SHA1
+   * MD5
+ * 500 handling
+ * 404 handling
+
+
+PubSubHubbub と比較して、JS を使いデータ加工を行うメリット
+
+ * keep simplicity
+ * api migration
+   * 既存サイトが対応する必要がない
 
