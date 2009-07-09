@@ -11,6 +11,7 @@
  * 404 handling
  * hook disable
  * search
+ * post 先 URL によるソート
 
 
 PubSubHubbub と比較して、JS を使いデータ加工を行うメリット

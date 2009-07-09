@@ -8,11 +8,14 @@
 		<p>
 			<strong>hookhub</strong> is a hub of web hooks. You can write JavaScript to routing web hooks to other web services.
 		</p>
+
+		<h3>How do I set my icon?</h3>
+		<p>Associate your email address by <a href="http://gravatar.com/">Gravatar</a>.</p>
 	</div>
 </div>
 
 <div id="reference" class="section">
-	<h2>Reference</h2>
+	<h2>Code Reference</h2>
 
 	<p>The code has some restrictions:</p>
 	<ul>
@@ -24,47 +27,55 @@
 	<div class="section">
 		<h3>Active Global Properties</h3>
 		<p>Some global properties are pre-defined.</p>
-		<dl>
-			<dt><code>stash : Object</code></dt>
-			<dd>
-				This object includes some parameters from hook request
-			</dd>
-			<dt><code>stash.user : String</code></dt>
-			<dd>
-				Hook author nickname
-			</dd>
-			<dt><code>stash.id : Number</code></dt>
-			<dd>
-				Id for the hook
-			</dd>
-			<dt><code>stash.config : Object</code></dt>
-			<dd>
-				Config set by
-				<% if (user) { %>
-				<a href="/<%= user %>/config">user config page</a>
-				<% } else { %>
-				user config page
-				<% } %>
-			</dd>
-			<dt><code>stash.params : Object</code></dt>
-			<dd>
-				Parameters from hook request
-			</dd>
 
-			<dt><code>stash.data : String</code></dt>
-			<dd>
-				Post data
-			</dd>
+		<div class="section">
+			<h4>Request properties</h4>
+			<dl>
+				<dt><code>stash : Object</code></dt>
+				<dd>
+					This object includes some parameters from hook request
+				</dd>
+				<dt><code>stash.user : String</code></dt>
+				<dd>
+					Hook author nickname
+				</dd>
+				<dt><code>stash.id : Number</code></dt>
+				<dd>
+					Id for the hook
+				</dd>
+				<dt><code>stash.config : Object</code></dt>
+				<dd>
+					Config set by
+					<% if (user) { %>
+					<a href="/<%= user %>/config">user config page</a>
+					<% } else { %>
+					user config page
+					<% } %>
+				</dd>
+				<dt><code>stash.params : Object</code></dt>
+				<dd>
+					Parameters from hook request
+				</dd>
 
-			<dt><code>stash.headers : Object</code></dt>
-			<dd>
-				Request headers
-			</dd>
+				<dt><code>stash.data : String</code></dt>
+				<dd>
+					Post data
+				</dd>
 
-			<dt><code>http(<var>opts</var>: Object) => Object</code></dt>
-			<dd>
-				HTTP request synchronously-executed. 
-			<pre>
+				<dt><code>stash.headers : Object</code></dt>
+				<dd>
+					Request headers
+				</dd>
+			</dl>
+		</div>
+
+		<div class="section">
+			<h4>HTTP Request</h4>
+			<dl>
+				<dt><code>http(<var>opts</var>: Object) => Object</code></dt>
+				<dd>
+					HTTP request synchronously-executed. 
+				<pre>
 // Example:
 http({
 	method  : "post",
@@ -75,7 +86,7 @@ http({
 	}
 })
 </pre>
-				<pre>
+					<pre>
 // Sample returned value
 ({
 	code: 200,
@@ -83,41 +94,49 @@ http({
 	body : "Hello"
 })
 </pre>
-			</dd>
+				</dd>
 
-			<dt><code>http.post(<var>url</var>: String, <var>params</var>: Object) => Object</code></dt>
-			<dd>
-				HTTP request using POST method.
-			</dd>
+				<dt><code>http.post(<var>url</var>: String, <var>params</var>: Object) => Object</code></dt>
+				<dd>
+					HTTP request using POST method.
+				</dd>
 
-			<dt><code>http.get(<var>url</var>: String) => Object</code></dt>
-			<dd>
-				HTTP request using GET method.
-			</dd>
+				<dt><code>http.get(<var>url</var>: String) => Object</code></dt>
+				<dd>
+					HTTP request using GET method.
+				</dd>
 
-			<dt><code>http.data(<var>params</var>: Object) => String</code></dt>
-			<dd>
-				Consturct post data from Object.
-				<pre>
+				<dt><code>http.data(<var>params</var>: Object) => String</code></dt>
+				<dd>
+					Consturct post data from Object.
+					<pre>
 ({
 	foo: "bar",
 	baz: "piyo"
 })
 //=>  "foo=bar&amp;baz=piyo"
 </pre>
-				<pre>
+					<pre>
 ({
 	foo: "bar",
 	baz: ["piyo", "puyo"]
 })
 //=>  "foo=bar&amp;baz=piyo&amp;baz=puyo"
 </pre>
-			</dd>
-			<dt><code>util.digest.md5(<var>data</var>: String) => String</code></dt>
-			<dd>Make hex digest for the data.</dd>
-			<dt><code>util.digest.sha1(<var>data</var>: String) => String</code></dt>
-			<dd>Make hex digest for the data.</dd>
-		</dl>
+				</dd>
+			</dl>
+		</div>
+
+
+		<div class="section">
+			<h4>Utility functions</h4>
+			<dl>
+				<dt><code>util.digest.md5(<var>data</var>: String) => String</code></dt>
+				<dd>Make MD5 hex digest for the data.</dd>
+				<dt><code>util.digest.sha1(<var>data</var>: String) => String</code></dt>
+				<dd>Make SHA1 hex digest for the data.</dd>
+			</dl>
+		</div>
 	</div>
 </div>
 
