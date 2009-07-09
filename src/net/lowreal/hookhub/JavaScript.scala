@@ -14,10 +14,16 @@ import scala.collection.mutable.{HashMap, ArrayBuffer}
 import scala.collection.jcl.Conversions._
 
 class TimeoutError extends RuntimeException
+class RestrictError(m:String) extends RuntimeException(m)
 
 object HookRunner {
 	class Proxy(scope: ScriptableObject) {
+		var maxReq = 3
+
 		def request (obj:NativeObject):Object = withContext { ctx =>
+			maxReq -= 1
+			if (maxReq <= 0) throw new RestrictError("http request limit exceed")
+
 			val ret = ctx.initStandardObjects
 
 			if (!obj.has("url", obj)) return ret

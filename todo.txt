@@ -1,5 +1,4 @@
 
- * request restrictions
  * email api
  * datastore memcache
  * comment functions
@@ -11,6 +10,7 @@
  * 500 handling
  * 404 handling
  * hook disable
+ * search
 
 
 PubSubHubbub と比較して、JS を使いデータ加工を行うメリット

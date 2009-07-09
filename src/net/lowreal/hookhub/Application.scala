@@ -191,26 +191,34 @@ class AppHttpRouter extends HttpRouter {
 		stash += "user"    -> hook.user.nick
 		stash += "id"      -> hook.id
 
-		println("Hooked: " + hook.user.email + " " + hook.id)
-		try {
-			val res = HookRunner.run(hook.code, stash, c.file("js/init.js"))
-			hook.result = res.take(500).toString
-			hook.last_hooked = new Date()
-			hook.save
-			c.res.code(200)
-			c.res.content("ok: " + res)
-		} catch {
-			case e:RhinoException => {
-				hook.result = e.details.take(500).toString
+		if (((new Date).getTime - hook.last_hooked.getTime) > (60 * 1000)) {
+			println("Hooked: " + hook.user.email + " " + hook.id)
+			try {
+				val res = HookRunner.run(hook.code, stash, c.file("js/init.js"))
+				hook.result = res.take(500).toString
+				hook.last_hooked = new Date()
 				hook.save
-				c.res.code(500)
-				c.res.content("error:" + e.details + " " + e.sourceName + ":" + e.lineNumber)
-			}
-			case e:TimeoutError => {
-				hook.result = "timeout"
-				hook.save
-				c.res.code(500)
-				c.res.content("timeout")
+				c.res.code(200)
+				c.res.content("ok: " + res)
+			} catch {
+				case e:RhinoException => {
+					hook.result = e.details.take(500).toString
+					hook.save
+					c.res.code(500)
+					c.res.content("error:" + e.details + " " + e.sourceName + ":" + e.lineNumber)
+				}
+				case e:TimeoutError => {
+					hook.result = "timeout"
+					hook.save
+					c.res.code(500)
+					c.res.content("timeout")
+				}
+				case e:RestrictError => {
+					hook.result = e.getMessage
+					hook.save
+					c.res.code(500)
+					c.res.content(e.getMessage)
+				}
 			}
 		}
 	}
@@ -249,10 +257,13 @@ class AppHttpRouter extends HttpRouter {
 			case "POST" => {
 				val code   = c.req.param("code")
 				val title  = c.req.param("title")
-				val parent = Hook.find(c.req.param("parent").toLong).getOrElse(null)
+				if (c.req.param.contains("parent")) {
+					Hook.find(c.req.param("parent").toLong).map { parent =>
+						hook.parent  = parent
+					}
+				}
 				hook.user    = c.user
 				hook.title   = title
-				hook.parent  = parent
 				hook.result  = ""
 				hook.code    = code
 				hook.created = new Date
