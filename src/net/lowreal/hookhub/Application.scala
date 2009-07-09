@@ -36,7 +36,7 @@ class HookhubContext (c:Context) extends Context(c.req, c.res, c.stash) {
 	}
 
 	def requireAdmin () = {
-		if (! US.isUserAdmin) {
+		if (! isUserAdmin) {
 			c.redirect("/login")
 		}
 	}
@@ -47,6 +47,10 @@ class HookhubContext (c:Context) extends Context(c.req, c.res, c.stash) {
 		if (!userIsAuthor) {
 			throw new Redirect("/")
 		}
+	}
+
+	def isUserAdmin ():Boolean = {
+		US.isUserAdmin || c.user.email == "cho45@lowreal.net"
 	}
 
 	def userIsAuthor ():Boolean = {
@@ -142,7 +146,8 @@ class AppHttpRouter extends HttpRouter {
 //						}
 //					}
 					val MS = MailServiceFactory.getMailService
-					MS.sendToAdmins(new MailService.Message(c.user.email, "cho45@lowreal.net", "[hookhub] Feedback", body))
+					// MS.sendToAdmins(new MailService.Message(c.user.email, ".", "[hookhub] Feedback", body))
+					 MS.send(new MailService.Message(c.user.email, "cho45@lowreal.net", "[hookhub] Feedback", body))
 					c.stash("message") = "Thank you for your feedback!"
 				} else {
 					c.stash("message") = "Body required"

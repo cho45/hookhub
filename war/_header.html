@@ -23,6 +23,9 @@
 							<a href="/<%= user %>/">
 								<img class="login" src="<%= c.user().icon() %>" width="16" height="16" alt="<%= c.user().nick() %>"/>
 								<%= user %>
+								<% if (c.isUserAdmin()) { %>
+								(Admin)
+								<% } %>
 							</a>
 						<% } else { %>
 							guest
