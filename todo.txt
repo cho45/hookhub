@@ -12,6 +12,7 @@
  * hook disable
  * search
  * post 先 URL によるソート
+ * base64
 
 
 PubSubHubbub と比較して、JS を使いデータ加工を行うメリット

@@ -17,7 +17,7 @@ class TimeoutError extends RuntimeException
 class RestrictError(m:String) extends RuntimeException(m)
 
 object HookRunner {
-	class Proxy(scope: ScriptableObject) {
+	class Proxy(stash: HashMap[String, Any], scope: ScriptableObject) {
 		var maxReq = 3
 
 		def request (obj:NativeObject):Object = withContext { ctx =>
@@ -79,6 +79,10 @@ object HookRunner {
 			ret
 		}
 
+		def mail (title:String, body:String) = {
+			stash("mail") = title -> body
+		}
+
 		def digest_md5 (o:String):Object = {
 			toHexString( MessageDigest.getInstance("MD5").digest(o.getBytes("UTF-8")) )
 		}
@@ -117,6 +121,7 @@ object HookRunner {
 
 		override def get (name: String, start: Scriptable):Object = (javaObject, name) match {
 			case ( _:Proxy, "request") => super.get(name, start)
+			case ( _:Proxy, "mail") => super.get(name, start)
 			case ( _:Proxy, "digest_md5") => super.get(name, start)
 			case ( _:Proxy, "digest_sha1") => super.get(name, start)
 			case ( _:Proxy, "hmac_md5") => super.get(name, start)
@@ -201,7 +206,7 @@ object HookRunner {
 
 			val scope = ctx.initStandardObjects()
 
-			ScriptableObject.putProperty(scope, "_proxy",  Context.javaToJS(new Proxy(scope), scope));
+			ScriptableObject.putProperty(scope, "_proxy",  Context.javaToJS(new Proxy(stash, scope), scope));
 			ScriptableObject.putProperty(scope, "stash", jsstash);
 			// scope.setAttributes("http", ScriptableObject.DONTENUM);
 			ctx.evaluateString(scope, init, "<init>", 1, null)

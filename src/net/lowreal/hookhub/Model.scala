@@ -33,10 +33,10 @@ class Hook extends DS[Hook]() {
 	def parent = apply[Long]('parent).map { Hook.find(_).getOrElse(null) }.getOrElse[Hook](null)
 
 	def created_= (o:Date) = update('created, o)
-	def created = apply[Date]('created, new Date)
+	def created = apply[Date]('created, new Date(0))
 
 	def last_hooked_= (o:Date) = update('last_hooked, o)
-	def last_hooked = apply[Date]('last_hooked, new Date)
+	def last_hooked = apply[Date]('last_hooked, new Date(0))
 
 	def updateToken () {
 		this.token = randomToken

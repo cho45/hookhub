@@ -188,13 +188,23 @@ class AppHttpRouter extends HttpRouter {
 		stash += "params"  -> c.req.param
 		stash += "headers" -> c.req.header
 		stash += "data"    -> c.req.body
-		stash += "user"    -> hook.user.nick
+		stash += "user"    -> hook.user.email
 		stash += "id"      -> hook.id
 
 		if (((new Date).getTime - hook.last_hooked.getTime) > (10 * 1000)) {
 			println("Hooked: " + hook.user.email + " " + hook.id)
 			try {
 				val res = HookRunner.run(hook.code, stash, c.file("js/init.js"))
+				println(stash)
+				if (stash.contains("mail")) {
+					stash("mail") match {
+						case (title:String, body:String) => {
+							val MS = MailServiceFactory.getMailService
+							MS.send(new MailService.Message(c.user.email, c.user.email, title, body))
+						}
+					}
+				}
+
 				hook.result = res.take(500).toString
 				hook.last_hooked = new Date()
 				hook.save

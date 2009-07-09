@@ -39,6 +39,10 @@ Global = (function () {
 		return ret.join('&');
 	}
 
+	this.mail = function (title, body) {
+		_proxy.mail(String(title), String(body))
+	}
+
 	this.util = {
 		digest : {
 			md5 : function (data) {
