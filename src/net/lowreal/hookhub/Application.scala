@@ -189,8 +189,9 @@ class AppHttpRouter extends HttpRouter {
 		stash += "headers" -> c.req.header
 		stash += "data"    -> c.req.body
 		stash += "user"    -> hook.user.nick
-		stash += "id"      -> hook.key.getId
-		
+		stash += "id"      -> hook.id
+
+		println("Hooked: " + hook.user.email + " " + hook.id)
 		try {
 			val res = HookRunner.run(hook.code, stash, c.file("js/init.js"))
 			hook.result = res.take(500).toString
@@ -279,7 +280,7 @@ class AppHttpRouter extends HttpRouter {
 		c.requireUserIsAuthor
 
 		val hook = Hook.find(c.req.param("id").toLong).getOrElse(throw new NotFound)
-		if (hook.user != c.user) throw new Forbidden
+		if (hook.user.id != c.user.id) throw new Forbidden
 
 		c.stash("hook") = hook
 		(c.req.method, c.req.param.getOrElse("mode", "create")) match {

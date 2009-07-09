@@ -4,7 +4,6 @@
  * datastore memcache
  * comment functions
   * comment hooks
- * fork
  * previous data
    * support config write?
  * some digest support
