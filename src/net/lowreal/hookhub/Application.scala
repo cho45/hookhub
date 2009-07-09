@@ -235,24 +235,30 @@ class AppHttpRouter extends HttpRouter {
 
 	route("/:user/hook/new") { c => 
 		c.requireUserIsAuthor
+
+		var hook = Hook.create
+
 		c.req.method match {
 			case "POST" => {
 				val code  = c.req.param("code")
 				val title = c.req.param("title")
-				val hook  = Hook.create
 				hook.user    = c.user
 				hook.title   = title
 				hook.result  = ""
 				hook.code    = code
 				hook.created = new Date
 				hook.updateToken
-				hook.save
-				c.redirect("/" + c.user.nick + "/hook/" + hook.key.getId)
+				if (hook.code.length <= 5000) {
+					hook.save
+					c.redirect("/" + c.user.nick + "/hook/" + hook.key.getId)
+				} else {
+					c.stash("message") = "Code must be within 5000 bytes."
+				}
 			}
 			case _ => { }
 		}
 
-		c.stash("hook") = Hook.create
+		c.stash("hook") = hook
 		c.view("hook.edit")
 	}
 
@@ -273,8 +279,12 @@ class AppHttpRouter extends HttpRouter {
 				val code  = c.req.param("code")
 				hook.title = title
 				hook.code  = code
-				hook.save
-				c.redirect("/" + c.user.nick + "/hook/" + hook.key.getId)
+				if (hook.code.length <= 5000) {
+					hook.save
+					c.redirect("/" + c.user.nick + "/hook/" + hook.key.getId)
+				} else {
+					c.stash("message") = "Code must be within 5000 bytes."
+				}
 			}
 			case ("POST", "delete") => {
 				c.requireSid

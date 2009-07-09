@@ -9,12 +9,9 @@
    * support config write?
  * some digest support
    * H-MAC
-   * SHA1
-   * MD5
  * 500 handling
  * 404 handling
- * restrict code length
- * show own icon at right top
+ * hook disable
 
 
 PubSubHubbub と比較して、JS を使いデータ加工を行うメリット
