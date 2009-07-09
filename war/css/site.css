@@ -79,8 +79,8 @@ form input.text:focus {
 	display: block;
 	background: url('/images/logo.png') no-repeat;
 	margin: 0 0 0 -3px;
-	width: 123px;
-	height: 44px;
+	width: 182px;
+	height: 49px;
 	text-indent: -10000px;
 	overflow: hidden;
 }
@@ -97,7 +97,10 @@ form input.text:focus {
 	font-size: 80%;
 }
 
-#navigation a {
+#navigation a ,
+#navigation a:link ,
+#navigation a:visited {
+	color: #000;
 	text-decoration: none;
 }
 
