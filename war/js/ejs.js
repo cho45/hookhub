@@ -23,7 +23,7 @@ EJS.prototype = {
 			flag = m[1];
 			ret.push(',', uneval(s.slice(0, m.index)));
 			s = s.slice(m.index + m[0].length);
-			m = s.match(/(.*?)%>/);
+			m = s.match(/([\s\S]*?)%>/);
 			s = s.slice(m.index + m[0].length);
 			c = m[1];
 			switch (flag) {
