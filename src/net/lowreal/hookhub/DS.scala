@@ -63,7 +63,7 @@ class DS [T <: DS[T]] () {
 		if (ret.hasNext) Some(ret.next) else None
 	}
 
-	def find (id:Int):Option[T] = {
+	def find (id:Long):Option[T] = {
 		val key = KeyFactory.createKey(entityName, id)
 		try {
 			Some(this.getClass.newInstance.asInstanceOf[T].setEntity(datastore.get(key)))
@@ -98,14 +98,16 @@ class DS [T <: DS[T]] () {
 		entity.setProperty(key.name, value)
 	}
 
-	protected def apply (key:Symbol, ifnone: => Any):Any = {
-		val ret = entity.getProperty(key.name)
+	protected def apply[U](key:Symbol, ifnone: => U):U = {
+		val ret = entity.getProperty(key.name).asInstanceOf[U]
 		if (ret == null) return ifnone
 		ret
 	}
 
-	protected def param (key:String, ifnone: => Any):Any = {
-		apply(Symbol(key), ifnone)
+	protected def apply[U](key:Symbol):Option[U] = {
+		val ret = entity.getProperty(key.name).asInstanceOf[U]
+		if (ret == null) return None
+		Some(ret)
 	}
 
 	def save ():T = {

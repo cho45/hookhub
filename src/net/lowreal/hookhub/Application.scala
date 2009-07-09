@@ -220,7 +220,7 @@ class AppHttpRouter extends HttpRouter {
 
 	route("/:user/") { c => 
 		if (c.req.param.contains("delete")) {
-			val id = c.req.param("delete").toInt
+			val id = c.req.param("delete").toLong
 			Hook.find(id) match {
 				case None    => {}
 				case Some(h) => h.delete
@@ -237,13 +237,21 @@ class AppHttpRouter extends HttpRouter {
 		c.requireUserIsAuthor
 
 		var hook = Hook.create
-
+		if (c.req.param.contains("fork")) {
+			Hook.find(c.req.param("fork").toLong).map { h =>
+				hook.code   = h.code
+				hook.title  = h.title
+				hook.parent = h
+			}
+		}
 		c.req.method match {
 			case "POST" => {
-				val code  = c.req.param("code")
-				val title = c.req.param("title")
+				val code   = c.req.param("code")
+				val title  = c.req.param("title")
+				val parent = Hook.find(c.req.param("parent").toLong).getOrElse(null)
 				hook.user    = c.user
 				hook.title   = title
+				hook.parent  = parent
 				hook.result  = ""
 				hook.code    = code
 				hook.created = new Date
@@ -263,14 +271,14 @@ class AppHttpRouter extends HttpRouter {
 	}
 
 	route("/:user/hook/:id") { c => 
-		c.stash("hook") = Hook.find(c.req.param("id").toInt).getOrElse(throw new NotFound)
+		c.stash("hook") = Hook.find(c.req.param("id").toLong).getOrElse(throw new NotFound)
 		c.view("hook")
 	}
 
 	route("/:user/hook/:id/edit") { c => 
 		c.requireUserIsAuthor
 
-		val hook = Hook.find(c.req.param("id").toInt).getOrElse(throw new NotFound)
+		val hook = Hook.find(c.req.param("id").toLong).getOrElse(throw new NotFound)
 		if (hook.user != c.user) throw new Forbidden
 
 		c.stash("hook") = hook
@@ -317,7 +325,7 @@ class AppHttpRouter extends HttpRouter {
 			case ("POST", "delete") => {
 				c.requireSid
 
-				val config = Config.find(c.req.param("id").toInt).getOrElse(throw new NotFound)
+				val config = Config.find(c.req.param("id").toLong).getOrElse(throw new NotFound)
 				config.delete
 				c.redirect("/" + c.user.nick + "/config")
 			}

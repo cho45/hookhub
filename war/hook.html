@@ -21,7 +21,14 @@
 			</span>
 			<% } %>
 		</h3>
+
 		<pre><%= hook.code() %></pre>
+
+		<% if ((parent = hook.parent())) { %>
+			<div class="fork">
+				This hook was forked from <a href="/<%= parent.user().nick() %>/hook/<%= parent.id() %>"><%= parent.user().nick() %></a>.
+			</div>
+		<% } %>
 	</div>
 
 	<div class="section">

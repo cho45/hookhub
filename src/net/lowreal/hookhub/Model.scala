@@ -18,22 +18,25 @@ class Hook extends DS[Hook]() {
 	def user = UserInfo.find('email -> apply('user, "")).getOrElse(null)
 
 	def title_= (o:String) = update('title, o)
-	def title = apply('title, "").asInstanceOf[String]
+	def title = apply[String]('title, "")
 
 	def result_= (o:String) = update('result, o)
-	def result = apply('result, "").asInstanceOf[String]
+	def result = apply[String]('result, "")
 
 	def token_= (o:String) = update('token, o)
-	def token = apply('token, "").asInstanceOf[String]
+	def token = apply[String]('token, "")
 
 	def code_= (str:String) = update('code, new Text(str))
-	def code = apply('code, new Text("")).asInstanceOf[Text].getValue
+	def code = apply[Text]('code, new Text("")).getValue
+
+	def parent_= (o:Hook) = update('parent, o.id)
+	def parent = apply[Long]('parent).map { Hook.find(_).getOrElse(null) }.getOrElse[Hook](null)
 
 	def created_= (o:Date) = update('created, o)
-	def created = apply('created, "").asInstanceOf[Date]
+	def created = apply[Date]('created, new Date)
 
 	def last_hooked_= (o:Date) = update('last_hooked, o)
-	def last_hooked = apply('last_hooked, "").asInstanceOf[Date]
+	def last_hooked = apply[Date]('last_hooked, new Date)
 
 	def updateToken () {
 		this.token = randomToken
@@ -43,10 +46,10 @@ class Hook extends DS[Hook]() {
 object Config extends Config()
 class Config extends DS[Config]() {
 	def name_= (o:String) = update('name, o)
-	def name = apply('name, "").asInstanceOf[String]
+	def name = apply[String]('name, "")
 
 	def value_= (o:String) = update('value, o)
-	def value = apply('value, "").asInstanceOf[String]
+	def value = apply[String]('value, "")
 }
 
 import java.util._
@@ -55,10 +58,10 @@ import java.security._
 object UserInfo extends UserInfo()
 class UserInfo extends DS[UserInfo]() {
 	def nick_= (o:String) = update('nick, o)
-	def nick = apply('nick, "").asInstanceOf[String]
+	def nick = apply[String]('nick, "")
 
 	def email_= (o:String) = update('email, o)
-	def email = apply('email, "").asInstanceOf[String]
+	def email = apply[String]('email, "")
 
 	def config = Config.select('user -> email)
 	def hooks  = Hook.select('user -> email)
