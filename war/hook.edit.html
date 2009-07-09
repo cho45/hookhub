@@ -13,7 +13,9 @@
 		<p>
 			<input type="hidden" name="sid" value="<%= c.req().session().getId() %>"/>
 			<input type="hidden" name="id" value="<%= hook.id() || "" %>"/>
+			<% if (hook.parent()) { %>
 			<input type="hidden" name="parent" value="<%= hook.parent().id() || "" %>"/>
+			<% } %>
 			<input type="submit" value="Submit"/>
 		</p>
 	</form>
