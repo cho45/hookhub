@@ -51,8 +51,9 @@ class Context (val req:Request, val res:Response, val stash:HashMap[String, Any]
 
 class RequestException (val code:Int) extends Exception("RequestException " + code)
 class Redirect (val url:String) extends RequestException(302)
-class NotFound () extends RequestException(404)
-class Success  () extends RequestException(200)
+class NotFound  () extends RequestException(404)
+class Forbidden () extends RequestException(403)
+class Success   () extends RequestException(200)
 
 trait HttpRouter {
 	implicit def str2mystr (s:String) = new MyString(s)

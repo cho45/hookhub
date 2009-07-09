@@ -12,7 +12,15 @@
 	</h2>
 
 	<div class="section">
-		<h3>Code</h3>
+		<h3>
+			Code
+
+			<% if (c.user()) { %>
+			<span class="less">
+				<a href="/<%= user %>/hook/new?fork=<%= hook.id() %>" class="fork">Fork</a>
+			</span>
+			<% } %>
+		</h3>
 		<pre><%= hook.code() %></pre>
 	</div>
 

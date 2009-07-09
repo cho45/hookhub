@@ -92,6 +92,7 @@ class DS [T <: DS[T]] () {
 	}
 
 	def key = entity.getKey
+	def id  = key.getId
 
 	protected def update (key:Symbol, value:Any):Unit = {
 		entity.setProperty(key.name, value)

@@ -271,6 +271,8 @@ class AppHttpRouter extends HttpRouter {
 		c.requireUserIsAuthor
 
 		val hook = Hook.find(c.req.param("id").toInt).getOrElse(throw new NotFound)
+		if (hook.user != c.user) throw new Forbidden
+
 		c.stash("hook") = hook
 		(c.req.method, c.req.param.getOrElse("mode", "create")) match {
 			case ("POST", "create") => {
