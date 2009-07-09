@@ -191,7 +191,7 @@ class AppHttpRouter extends HttpRouter {
 		stash += "user"    -> hook.user.nick
 		stash += "id"      -> hook.id
 
-		if (((new Date).getTime - hook.last_hooked.getTime) > (60 * 1000)) {
+		if (((new Date).getTime - hook.last_hooked.getTime) > (10 * 1000)) {
 			println("Hooked: " + hook.user.email + " " + hook.id)
 			try {
 				val res = HookRunner.run(hook.code, stash, c.file("js/init.js"))
