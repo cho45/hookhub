@@ -1,8 +1,14 @@
 package net.lowreal.hookhub
 
+import java.util._
 import java.net._
 import java.io._
+import java.security._
 import java.lang.System
+import javax.crypto.spec.SecretKeySpec
+import javax.crypto.Mac 
+
+
 import org.mozilla.javascript._
 import scala.collection.mutable.{HashMap, ArrayBuffer}
 import scala.collection.jcl.Conversions._
@@ -10,63 +16,90 @@ import scala.collection.jcl.Conversions._
 class TimeoutError extends RuntimeException
 
 object HookRunner {
-	class Http {
-		def request (obj:NativeObject): ScriptableObject = {
+	class Proxy(scope: ScriptableObject) {
+		def request (obj:NativeObject):Object = withContext { ctx =>
+			val ret = ctx.initStandardObjects
+
+			if (!obj.has("url", obj)) return ret
+			val method:String = (if (obj.has("method", obj)) obj.get("method", obj).asInstanceOf[String] else "GET").toUpperCase;
+
+			val url  = new URL(obj.get("url", obj).asInstanceOf[String])
+			val http = url.openConnection().asInstanceOf[HttpURLConnection]
+			http.setConnectTimeout(3)
+			http.setReadTimeout(3)
+			http.setRequestMethod(method)
+			http.setInstanceFollowRedirects(false)
+			if (obj.has("headers", obj)) {
+				val headers = obj.get("headers", obj).asInstanceOf[NativeObject]
+				for (i <- headers.getIds) i match {
+					case key: String => {
+						http.setRequestProperty(key, headers.get(key, headers).asInstanceOf[String])
+					}
+				}
+			}
+			http.setRequestProperty("User-Agent", "Hookhub")
+			if (method == "POST") {
+				http.setDoOutput(true)
+				val ow = new OutputStreamWriter(http.getOutputStream());
+				val bw = new BufferedWriter(ow);
+				bw.write(if (obj.has("data", obj)) obj.get("data", obj).asInstanceOf[String] else "");
+				bw.close();
+				ow.close();
+			} else {
+				http.connect()
+			}
+
+			try  {
+				val jsheaders = ctx.initStandardObjects
+				ret.put("code", ret, http.getResponseCode())
+				ret.put("headers", ret, jsheaders)
+
+				val headers = http.getHeaderFields()
+				for ( (key, value) <- headers) {
+					jsheaders.put(key.capitalize, jsheaders, value(0))
+				}
+
+				val reader = new BufferedReader(new InputStreamReader(http.getInputStream()))
+				var line   = ""
+				val sb     = new StringBuilder
+				while ({ line = reader.readLine(); line != null }) {
+					sb.append(line)
+					sb.append("\n")
+				}
+				ret.put("body", ret, sb.mkString)
+			} finally {
+				http.disconnect()
+			}
+			ret
+		}
+
+		def digest_md5 (o:String):Object = {
+			toHexString( MessageDigest.getInstance("MD5").digest(o.getBytes("UTF-8")) )
+		}
+
+		def digest_sha1 (o:String):Object = {
+			toHexString( MessageDigest.getInstance("SHA1").digest(o.getBytes("UTF-8")) )
+		}
+//
+//		def hmac_md5 (o:String):Object = {
+//			val key = new SecretKeySpec(o.getBytes("UTF-8"), "HmacMD5")
+//			val mac = Mac.getInstance(key.getAlgorithm)
+//			mac.init(key)
+//			toHexString( mac.doFinal("what do ya want for nothing?".getBytes ) )
+//		}
+
+		def toHexString (array:Array[byte]):String = {
+			val sb = new StringBuffer()
+			for (c <- array) {
+				sb.append(Integer.toHexString((c  & 0xFF) | 0x100).substring(1, 3));
+			}
+			sb.toString
+		}
+
+		def withContext (block: Context => Object):Object = {
 			val ctx = Context.enter()
 			try {
-				val ret = ctx.initStandardObjects
-
-				if (!obj.has("url", obj)) return ret
-				val method:String = (if (obj.has("method", obj)) obj.get("method", obj).asInstanceOf[String] else "GET").toUpperCase;
-
-				val url  = new URL(obj.get("url", obj).asInstanceOf[String])
-				val http = url.openConnection().asInstanceOf[HttpURLConnection]
-				http.setConnectTimeout(3)
-				http.setReadTimeout(3)
-				http.setRequestMethod(method)
-				http.setInstanceFollowRedirects(false)
-				if (obj.has("headers", obj)) {
-					val headers = obj.get("headers", obj).asInstanceOf[NativeObject]
-					for (i <- headers.getIds) i match {
-						case key: String => {
-							http.setRequestProperty(key, headers.get(key, headers).asInstanceOf[String])
-						}
-					}
-				}
-				http.setRequestProperty("User-Agent", "Hookhub")
-				if (method == "POST") {
-					http.setDoOutput(true)
-					val ow = new OutputStreamWriter(http.getOutputStream());
-					val bw = new BufferedWriter(ow);
-					bw.write(if (obj.has("data", obj)) obj.get("data", obj).asInstanceOf[String] else "");
-					bw.close();
-					ow.close();
-				} else {
-					http.connect()
-				}
-
-				try  {
-					val jsheaders = ctx.initStandardObjects
-					ret.put("code", ret, http.getResponseCode())
-					ret.put("headers", ret, jsheaders)
-
-					val headers = http.getHeaderFields()
-					for ( (key, value) <- headers) {
-						jsheaders.put(key.capitalize, jsheaders, value(0))
-					}
-
-					val reader = new BufferedReader(new InputStreamReader(http.getInputStream()))
-					var line   = ""
-					val sb     = new StringBuilder
-					while ({ line = reader.readLine(); line != null }) {
-						sb.append(line)
-						sb.append("\n")
-					}
-					ret.put("body", ret, sb.mkString)
-				} finally {
-					http.disconnect()
-				}
-				ret
+				block(ctx)
 			} finally {
 				Context.exit()
 			}
@@ -77,7 +110,11 @@ object HookRunner {
 		extends NativeJavaObject(scope, javaObject, staticType) {
 
 		override def get (name: String, start: Scriptable):Object = (javaObject, name) match {
-			case ( _:Http, "request") => super.get(name, start)
+			case ( _:Proxy, "request") => super.get(name, start)
+			case ( _:Proxy, "digest_md5") => super.get(name, start)
+			case ( _:Proxy, "digest_sha1") => super.get(name, start)
+			case ( _:Proxy, "hmac_md5") => super.get(name, start)
+			case ( _:Proxy, "hmac_sha1") => super.get(name, start)
 			case _ => { println(javaObject, name); null }
 		}
 	}
@@ -148,14 +185,17 @@ object HookRunner {
 			ctx.setMaximumInterpreterStackDepth(1000)
 
 			ctx.setClassShutter(new ClassShutter() {
-				def visibleToScripts(fullClassName: String) = fullClassName == classOf[Http].getName
+				def visibleToScripts(fullClassName: String) = {
+					fullClassName == classOf[Proxy].getName ||
+					fullClassName == classOf[String].getName
+				}
 			})
 		//	tx.setSecurityController(new SecurityController() {
 		//	})
 
 			val scope = ctx.initStandardObjects()
 
-			ScriptableObject.putProperty(scope, "_http",  Context.javaToJS(new Http, scope));
+			ScriptableObject.putProperty(scope, "_proxy",  Context.javaToJS(new Proxy(scope), scope));
 			ScriptableObject.putProperty(scope, "stash", jsstash);
 			// scope.setAttributes("http", ScriptableObject.DONTENUM);
 			ctx.evaluateString(scope, init, "<init>", 1, null)

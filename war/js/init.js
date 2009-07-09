@@ -48,14 +48,14 @@ Global = (function () {
 				return String(_proxy.digest_sha1(data))
 			}
 		},
-		hmac : {
-			md5 : function (key, data) {
-				return String(_proxy.hmac_md5(data))
-			},
-			sha1 : function (key, data) {
-				return String(_proxy.hmac_sha1(data))
-			}
-		}
+//		hmac : {
+//			md5 : function (key, data) {
+//				return String(_proxy.hmac_md5(data))
+//			},
+//			sha1 : function (key, data) {
+//				return String(_proxy.hmac_sha1(data))
+//			}
+//		}
 	};
 
 	delete this._proxy;

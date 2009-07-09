@@ -64,16 +64,16 @@ class UserInfo extends DS[UserInfo]() {
 	def hooks  = Hook.select('user -> email)
 
 	def icon ():String = {
-		def hex (array:Array[byte]):String = {        
-			val sb = new StringBuffer();        
-			for (c <- array) {            
-				sb.append(Integer.toHexString((c  & 0xFF) | 0x100).substring(1, 3));        
-			}        
+		def hex (array:Array[byte]):String = {
+			val sb = new StringBuffer()
+			for (c <- array) {
+				sb.append(Integer.toHexString((c  & 0xFF) | 0x100).substring(1, 3));
+			}
 			sb.toString
 		}
 
 		val md = MessageDigest.getInstance("MD5");
-		"http://www.gravatar.com/avatar/" + hex(md.digest(email.getBytes("CP1252"))) + "?s=60"
+		"http://www.gravatar.com/avatar/" + hex(md.digest(email.getBytes("UTF-8"))) + "?s=60"
 	}
 }
 
