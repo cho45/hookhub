@@ -17,17 +17,25 @@
 			<h1 id="logo"><a href="/">HookHub</a></h1>
 			<div id="navigation">
 				<% if (c.user()) { %>
-					Hello
-					<% if (String(c.user().nick())) { %>
-						<a href="/<%= user %>/"><%= user %></a>
-					<% } else { %>
-						guest
-					<% } %>
-					<a href="/<%= user || 'guest' %>/hook/new">New</a>
-					<a href="/<%= user || 'guest' %>/config">Config</a>
-					<a href="/logout">Logout</a>
+					<div class="loggedin">
+						Hello
+						<% if (String(c.user().nick())) { %>
+							<a href="/<%= user %>/">
+								<img class="login" src="<%= c.user().icon() %>" width="16" height="16" alt="<%= c.user().nick() %>"/>
+								<%= user %>
+							</a>
+						<% } else { %>
+							guest
+						<% } %>
+						<a href="/<%= user || 'guest' %>/hook/new">New</a>
+						<a href="/<%= user || 'guest' %>/config">Config</a>
+						<a href="/help">Help</a>
+						<a href="/logout">Logout</a>
+					</div>
 				<% } else { %>
-					<a href="/login">Login</a>
+					<div class="loggedout">
+						<a href="/login">Login</a>
+					</div>
 				<% } %>
 			</div>
 

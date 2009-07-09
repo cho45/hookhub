@@ -1,17 +1,18 @@
 Global = (function () {
-	var _http = this._http;
+	var _proxy = this._proxy;
+
 	this.http = function (opts) {
-		return _http.request(opts);
+		return _proxy.request(opts);
 	}
 
-	http.get   = function (url)       {
+	this.http.get   = function (url)       {
 		return http({
 			method : "get",
 			url    : url
 		})
 	};
 
-	http.post  = function (url, params) {
+	this.http.post  = function (url, params) {
 		return http({
 			method  : "post",
 			url     : url,
@@ -22,7 +23,7 @@ Global = (function () {
 		})
 	};
 
-	http.data = function (params) {
+	this.http.data = function (params) {
 		var ret = [];
 		for (var key in params) if (params.hasOwnProperty(key)) {
 			var val = params[key];
@@ -38,7 +39,26 @@ Global = (function () {
 		return ret.join('&');
 	}
 
-	delete this._http;
+	this.util = {
+		digest : {
+			md5 : function (data) {
+				return String(_proxy.digest_md5(data))
+			},
+			sha1 : function (data) {
+				return String(_proxy.digest_sha1(data))
+			}
+		},
+		hmac : {
+			md5 : function (key, data) {
+				return String(_proxy.hmac_md5(data))
+			},
+			sha1 : function (key, data) {
+				return String(_proxy.hmac_sha1(data))
+			}
+		}
+	};
+
+	delete this._proxy;
 	delete stash.params.token;
 	return this;
 })();

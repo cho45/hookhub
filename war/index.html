@@ -1,24 +1,6 @@
 <%include= _header %>
 <div id="recently-hooked" class="section">
 	<h2>Recently Hooked</h2>
-	<div class="hook">
-		<div class="title">Post to twitter from github</div>
-		<div class="author">
-			<img src="http://0.gravatar.com/avatar/959b008b9d793754a1515839a56b64df?s=60&d=wavatar" width="60" height="60" alt="foobar"/>
-		</div>
-		<div class="code">
-			<pre>
-http({
-	method: "post",
-	headers : {
-		Authentication: config.twitter_auth
-	},
-	data : "status=" + encodeURIComponent("test")
-});
-</pre>
-		</div>
-	</div>
-
 	<% hooks = stash('hooks') %>
 	<% for (var i = 0; i < hooks.length(); i++) { var hook = hooks.apply(i) %>
 	<%include= _hook %>
