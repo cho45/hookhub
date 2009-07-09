@@ -49,12 +49,12 @@ title = String(hook.title())
 
 	</div>
 
+	<% if (c.userIsAuthor()) { %>
 	<div class="section">
 		<h3>Last result</h3>
 		<pre><%= hook.result() %></pre>
 	</div>
 
-	<% if (c.userIsAuthor()) { %>
 	<div class="section">
 		<h3>Hook URI <span class="less">(only you can see)</span></h3>
 		<p>
