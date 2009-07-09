@@ -92,7 +92,11 @@ class AppHttpRouter extends HttpRouter {
 
 	this reg ":static" -> """help"""
 
-	before("/*") { c =>
+	before("/*rest") { c =>
+		if (c.req.serverName == "hookhub.appspot.com") {
+			c.redirect("http://www.hookhub.com/" + c.req.param("rest"))
+		}
+
 		if (c.user != null) {
 			c.stash("user") = c.user.nick
 		}

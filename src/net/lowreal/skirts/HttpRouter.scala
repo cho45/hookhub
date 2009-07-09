@@ -159,6 +159,7 @@ class Request (req0:HttpServletRequest)  {
 	def requestURI () = req0.getRequestURI
 	def requestURL () = req0.getRequestURL
 	def path = requestURI
+	def serverName () = req0.getServerName
 
 	def query () = req0.getQueryString
 
