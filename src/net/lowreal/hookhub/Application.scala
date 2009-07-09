@@ -75,7 +75,7 @@ class HookhubContext (c:Context) extends Context(c.req, c.res, c.stash) {
 		if (c.debug) {
 			"http://localhost:8080" + path
 		} else {
-			"http://hookhub.appspot.com/" + path
+			"http://hookhub.appspot.com" + path
 		}
 	}
 
