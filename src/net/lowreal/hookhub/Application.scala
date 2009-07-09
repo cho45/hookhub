@@ -75,7 +75,7 @@ class HookhubContext (c:Context) extends Context(c.req, c.res, c.stash) {
 		if (c.debug) {
 			"http://localhost:8080" + path
 		} else {
-			"http://hookhub.appspot.com" + path
+			"http://www.hookhub.com" + path
 		}
 	}
 
@@ -199,6 +199,8 @@ class AppHttpRouter extends HttpRouter {
 		stash += "data"    -> c.req.body
 		stash += "user"    -> hook.user.email
 		stash += "id"      -> hook.id
+
+		c.res.header("Context-Type", "text/plain")
 
 		if (((new Date).getTime - hook.last_hooked.getTime) > (10 * 1000)) {
 			println("Hooked: " + hook.user.email + " " + hook.id)

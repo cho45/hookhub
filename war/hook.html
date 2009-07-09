@@ -5,11 +5,11 @@ title = String(hook.title())
 <%include= _header %>
 <div id="hook" class="section">
 	<h2>
-		Hook::
 		<%= hook.title() %>
-		<% if (c.userIsAuthor()) { %>
+
+		<% if (c.user()) { %>
 		<span class="less">
-			<a href="/<%= author %>/hook/<%= hook.key().getId() %>/edit">Edit</a>
+			<a href="/<%= user %>/hook/new?fork=<%= hook.id() %>" class="fork">Fork</a>
 		</span>
 		<% } %>
 	</h2>
@@ -18,9 +18,9 @@ title = String(hook.title())
 		<h3>
 			Code
 
-			<% if (c.user()) { %>
+			<% if (c.userIsAuthor()) { %>
 			<span class="less">
-				<a href="/<%= user %>/hook/new?fork=<%= hook.id() %>" class="fork">Fork</a>
+				<a href="/<%= author %>/hook/<%= hook.key().getId() %>/edit">Edit</a>
 			</span>
 			<% } %>
 		</h3>
