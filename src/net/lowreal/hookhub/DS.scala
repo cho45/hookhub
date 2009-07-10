@@ -2,7 +2,34 @@ package net.lowreal.skirts
 
 import com.google.appengine.api.datastore._
 import com.google.appengine.api.datastore.FetchOptions.Builder._
+import com.google.appengine.api.memcache._
 import scala.collection.jcl.Conversions._
+
+object Cache {
+	val memcache  = MemcacheServiceFactory.getMemcacheService
+
+	def get[T](key:Object):Option[T] = {
+		val ret = memcache.get(key).asInstanceOf[T]
+		if (ret == null) return None
+		Some(ret)
+	}
+
+	def put (key:Object, value:Object) = {
+		memcache.put(key, value)
+	}
+
+	def delete (key:Object):Boolean = {
+		memcache.delete(key)
+	}
+
+	def key[T](key:Object)(els: => T):T = {
+		get[T](key).getOrElse {
+			val ret = els
+			memcache.put(key, els)
+			els
+		}
+	}
+}
 
 class DS [T <: DS[T]] () {
 	def entityName = this.getClass.getName
