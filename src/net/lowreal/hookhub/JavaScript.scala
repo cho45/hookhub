@@ -163,7 +163,7 @@ object HookRunner {
 		override def observeInstructionCount (context: Context, instructionCount: Int):Unit = {
 			val ctx = context.asInstanceOf[SandboxContext];
 			val current = System.currentTimeMillis()
-			if (current >= ctx.startTime + 3000) {
+			if (current >= ctx.startTime + 5000) {
 				throw new TimeoutError();
 			}
 		}
