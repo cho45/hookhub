@@ -9,6 +9,26 @@ pre {
 	min-height: 10em;
 }
 
+code {
+}
+
+code .keyword {
+	color: #275366;
+	font-weight: bold;
+}
+
+code .string {
+	color: #666;
+}
+
+code .comment {
+	color: #666;
+}
+
+code .number {
+	color: #333;
+}
+
 body {
 	background: #fff;
 	line-height: 1.6;
