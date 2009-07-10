@@ -80,5 +80,19 @@ class UserInfo extends DS[UserInfo]() {
 	}
 }
 
+object Comment extends Comment()
+class Comment extends DS[Comment]() {
+	def user_= (o:UserInfo) = update('user, o.email)
+	def user = UserInfo.find('email -> apply('user, "")).getOrElse(null)
+
+	def parent_= (o:Hook) = update('parent, o.id)
+	def parent = apply[Long]('parent).map { Hook.find(_).getOrElse(null) }.getOrElse[Hook](null)
+
+	def body_= (o:String) = update('body, o)
+	def body = apply[String]('body, "")
+
+	def created_= (o:Date) = update('created, o)
+	def created = apply[Date]('created, new Date(0))
+}
 
 

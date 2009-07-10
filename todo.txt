@@ -1,5 +1,4 @@
 
- * email api
  * datastore memcache
  * comment functions
   * comment hooks
@@ -12,7 +11,6 @@
  * hook disable
  * post 先 URL によるソート
  * curl によりテストヘルプ
- * fork はボタンのほうが良い
 
 
 PubSubHubbub と比較して、JS を使いデータ加工を行うメリット

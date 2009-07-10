@@ -9,5 +9,10 @@
 		<property name="user" direction="asc" />
 		<property name="created" direction="desc" />
 	</datastore-index>
+
+	<datastore-index kind="net.lowreal.hookhub.Comment$" ancestor="false" source="manual">
+		<property name="parent" direction="asc"/>
+		<property name="created" direction="desc"/>
+	</datastore-index>
 </datastore-indexes>
 

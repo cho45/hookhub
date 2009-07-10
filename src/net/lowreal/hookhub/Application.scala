@@ -306,7 +306,23 @@ class AppHttpRouter extends HttpRouter {
 	}
 
 	route("/:user/hook/:id") { c => 
-		c.stash("hook") = Hook.find(c.req.param("id").toLong).getOrElse(throw new NotFound)
+		val hook = Hook.find(c.req.param("id").toLong).getOrElse(throw new NotFound)
+
+		(c.req.method, c.req.param.getOrElse("mode", "comment")) match {
+			case ("POST", "comment") => {
+				val comment = Comment.create
+				comment.user    = c.user
+				comment.parent  = hook
+				comment.created = new Date
+				comment.body    = c.req.param("body")
+				comment.save
+				c.redirect("/" + c.req.param("user") + "/hook/" + c.req.param("id"))
+			}
+			case _ => { }
+		}
+
+		c.stash("hook") = hook
+		c.stash("comments") = Comment.select('parent -> hook.id, 'order -> ('created, 'desc)).toList
 		c.view("hook")
 	}
 

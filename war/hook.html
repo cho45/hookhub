@@ -5,10 +5,11 @@ title = String(hook.title())
 <%include= _header %>
 <div id="hook" class="section">
 	<h2>
+		Hook:
 		<%= hook.title() %>
 	</h2>
 
-	<div class="section">
+	<div class="section code">
 		<h3>
 			Code
 
@@ -25,13 +26,24 @@ title = String(hook.title())
 			<% } %>
 		</h3>
 
-		<pre><code><%= hook.code() %></code></pre>
+		<div class="author">
+			<a href="/<%= hook.user().nick() %>/">
+				<img src="<%= hook.user().icon() %>" width="60" height="60" alt="<%= hook.user().nick() %>"/>
+			</a>
 
-		<% if ((parent = hook.parent())) { %>
-			<div class="fork">
-				This hook was forked from <a href="/<%= parent.user().nick() %>/hook/<%= parent.id() %>"><%= parent.user().nick() %></a>.
-			</div>
-		<% } %>
+			<% if ((parent = hook.parent())) { %>
+				<div class="fork">
+					forked from
+					<a href="/<%= parent.user().nick() %>/hook/<%= parent.id() %>">
+						<img src="<%= parent.user().icon() %>" width="48" height="48" alt="<%= parent.user().nick() %>"/>
+					</a>
+				</div>
+			<% } %>
+		</div>
+
+		<div class="code">
+			<pre><code><%= hook.code() %></code></pre>
+		</div>
 
 		<div style="text-align: right">
 			<script type="text/javascript"><!--
@@ -45,6 +57,34 @@ title = String(hook.title())
 			<script type="text/javascript"
 			src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
 			</script>
+		</div>
+
+		<div class="section" id="comments">
+			<h4>Comments</h4>
+
+			<% comments = stash('comments') %>
+			<% for (var i = 0; i < comments.length(); i++) { var comment = comments.apply(i); if (!comment.user()) continue; %>
+				<div class="comment">
+					<div class="author">
+						<a href="/<%= comment.user().nick() %>/">
+							<img src="<%= comment.user().icon() %>" width="48" height="48" alt="<%= comment.user().nick() %>"/>
+						</a>
+					</div>
+					<div class="body">
+						<%= comment.body() %>
+					</div>
+				</div>
+			<% } %>
+
+			<% if (c.user()) { %>
+			<form action="" method="post">
+				<p><textarea name="body" cols="40" rows="5"></textarea></p>
+				<p>
+					<input type="hidden" name="mode" value="comment" />
+					<input type="submit" value="Post" class="button" />
+				</p>
+			</form>
+			<% } %>
 		</div>
 
 	</div>

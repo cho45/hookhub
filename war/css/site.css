@@ -236,6 +236,7 @@ form dl dd.code textarea.error {
 
 .hook .author {
 	float: left;
+	width: 65px;
 }
 
 .hook .author img {
@@ -283,3 +284,48 @@ form dl dd.code textarea.error {
 	display: inline;
 }
 
+
+#hook .section.code {
+
+}
+
+#hook .section.code .author {
+	float: left;
+	width: 65px;
+}
+
+#hook .section.code .author .fork {
+	margin: 10px 0 0 0;
+	opacity: 0.8;
+	font-size: 10px;
+}
+
+#hook .section.code .code {
+	margin: 0 0 0 70px;
+	padding: 0;
+}
+
+#hook #comments {
+	width: 50%;
+	margin: 0 0 0 50%;
+}
+
+#hook #comments .comment {
+	padding: 1em 0 1em;
+	clear: both;
+}
+
+#hook #comments .comment .author {
+	float: left;
+	width: 55px;
+}
+
+#hook #comments .comment .body {
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border-radius: 5px;
+	margin: 0 0 0 60px;
+	background: #efefef;
+	min-height: 5em;
+	padding: 0 1em;
+}
