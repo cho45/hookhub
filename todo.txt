@@ -1,7 +1,5 @@
 
  * datastore memcache
- * comment functions
-  * comment hooks
  * previous data
    * support config write?
  * some digest support
