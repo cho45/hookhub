@@ -95,7 +95,7 @@ form input.text:focus {
 
 #navigation .loggedin ,
 #navigation .loggedout {
-	font-size: 80%;
+	font-size: 12px;
 }
 
 #navigation a ,
@@ -111,6 +111,25 @@ form input.text:focus {
 
 #navigation img.login {
 	vertical-align: text-bottom;
+}
+
+#search {
+	position: absolute;
+	top: 0;
+	right: 0;
+	padding: 60px 2em 2em 2em;
+}
+
+#search input.text {
+	border: 1px solid #666;
+	width: auto;
+}
+
+#search input.button {
+	-moz-border-radius: 5px;
+	background: #000;
+	color: #fff;
+	border: 1px solid #666;
 }
 
 #recently-hooked h2 {

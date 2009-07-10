@@ -12,6 +12,8 @@
  * hook disable
  * post 先 URL によるソート
  * curl によりテストヘルプ
+ * fork はボタンのほうが良い
+ * 投稿するまえに JS で new Function() かけて validate する
 
 
 PubSubHubbub と比較して、JS を使いデータ加工を行うメリット
