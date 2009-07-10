@@ -115,9 +115,9 @@ form input.text:focus {
 
 #search {
 	position: absolute;
-	top: 0;
+	top: 60px;
 	right: 0;
-	padding: 60px 2em 2em 2em;
+	padding: 0 2em 2em 2em;
 }
 
 #search input.text {
