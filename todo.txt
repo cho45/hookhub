@@ -10,9 +10,7 @@
  * 500 handling
  * 404 handling
  * hook disable
- * search
  * post 先 URL によるソート
- * base64
  * curl によりテストヘルプ
 
 

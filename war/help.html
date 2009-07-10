@@ -21,7 +21,7 @@
 	<ul>
 		<li>Done within 3seconds.</li>
 		<li>1000 recursion.</li>
-		<li>Can't invoke hook in 10sec.</li>
+		<li>Can't re-invoke same hook in 10seconds.</li>
 	</ul>
 
 	<div class="section">
@@ -124,6 +124,15 @@ http({
 //=>  "foo=bar&amp;baz=piyo&amp;baz=puyo"
 </pre>
 				</dd>
+			</dl>
+		</div>
+		
+		<div class="section">
+			<h4>Mail</h4>
+			<p>You can send mail only yourself.</p>
+			<dl>
+				<dt><code>mail(<var>title</var>, <var>body</var>)</code></dt>
+				<dd>Mail to you with title and body. Only send 1 mail in a hook.</dd>
 			</dl>
 		</div>
 

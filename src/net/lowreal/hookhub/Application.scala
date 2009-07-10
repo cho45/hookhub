@@ -93,7 +93,7 @@ class AppHttpRouter extends HttpRouter {
 
 	val US = UserServiceFactory.getUserService
 
-	this reg ":static" -> """help"""
+	this reg ":static" -> """help|search"""
 
 	before("/*rest") { c =>
 		if (c.req.serverName == "hookhub.appspot.com") {

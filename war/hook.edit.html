@@ -19,6 +19,24 @@
 			<input type="submit" value="Submit"/>
 		</p>
 	</form>
+
+	<div class="section">
+		<h3>Hook URI <span class="less">(only you can see)</span></h3>
+		<form action="" mehtod="post">
+			<p>
+				<input type="text" value="<%= c.absolute("/hook/" + hook.token()) %>" size="80" onclick="this.select()" onfocus="this.select()" class="text"/>
+				<input type="hidden" name="mode" value="changeToken" />
+				<input type="submit" value="Change" />
+			</p>
+		</form>
+		<p>You can test this hook with curl:</p>
+		<dl>
+			<dt>Simple post</dt>
+			<dd><kbd>curl -dfoo=bar http://www.hookhub.com/hook/....</kbd></dd>
+			<dt>Post content</dt>
+			<dd><kbd>curl -v -H "Content-Type: text/plain" -d "aooooo"</kbd></dd>
+		</dl>
+	</div>
 </div>
 
 <% if (hook.key().getId()) { %>
