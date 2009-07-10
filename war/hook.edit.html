@@ -20,6 +20,7 @@
 		</p>
 	</form>
 
+	<% if (String(hook.token())) { %>
 	<div class="section">
 		<h3>Hook URI <span class="less">(only you can see)</span></h3>
 		<form action="" method="post">
@@ -40,6 +41,7 @@
 			<dd><kbd>curl -v -H "Content-Type: text/plain" -d "aooooo"</kbd></dd>
 		</dl>
 	</div>
+	<% } %>
 </div>
 
 <% if (hook.key().getId()) { %>
