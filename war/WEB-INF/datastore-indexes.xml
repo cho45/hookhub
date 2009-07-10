@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <datastore-indexes
-	autoGenerate="true">
+	autoGenerate="false">
 	<datastore-index kind="net.lowreal.hookhub.Config$" ancestor="false">
 		<property name="user" direction="asc" />
 		<property name="name" direction="asc" />

@@ -8,8 +8,10 @@ import java.lang.System
 import javax.crypto.spec.SecretKeySpec
 import javax.crypto.Mac 
 
-
 import org.mozilla.javascript._
+
+import org.apache.commons.codec.binary.Base64
+
 import scala.collection.mutable.{HashMap, ArrayBuffer}
 import scala.collection.jcl.Conversions._
 
@@ -98,6 +100,14 @@ object HookRunner {
 //			toHexString( mac.doFinal("what do ya want for nothing?".getBytes ) )
 //		}
 
+		def base64_encode (o:String):Object = {
+			new String(Base64.encodeBase64(o.getBytes("UTF-8")), "UTF-8")
+		}
+
+		def base64_decode (o:String):Object = {
+			new String(Base64.decodeBase64(o.getBytes("UTF-8")), "UTF-8")
+		}
+
 		def toHexString (array:Array[byte]):String = {
 			val sb = new StringBuffer()
 			for (c <- array) {
@@ -126,6 +136,8 @@ object HookRunner {
 			case ( _:Proxy, "digest_sha1") => super.get(name, start)
 			case ( _:Proxy, "hmac_md5") => super.get(name, start)
 			case ( _:Proxy, "hmac_sha1") => super.get(name, start)
+			case ( _:Proxy, "base64_encode") => super.get(name, start)
+			case ( _:Proxy, "base64_decode") => super.get(name, start)
 			case _ => { println(javaObject, name); null }
 		}
 	}

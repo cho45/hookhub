@@ -44,6 +44,11 @@ Global = (function () {
 	}
 
 	this.util = {
+		base64 : {
+			encode : function (data) {
+				return String(_proxy.base64_encode(data))
+			}
+		},
 		digest : {
 			md5 : function (data) {
 				return String(_proxy.digest_md5(data))

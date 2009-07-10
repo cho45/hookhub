@@ -88,7 +88,6 @@ class HookhubContext (c:Context) extends Context(c.req, c.res, c.stash) {
 	}
 }
 
-
 class AppHttpRouter extends HttpRouter {
 	implicit def ctx2myctx (c:Context) = new HookhubContext(c)
 
@@ -224,18 +223,21 @@ class AppHttpRouter extends HttpRouter {
 			} catch {
 				case e:RhinoException => {
 					hook.result = e.details.take(500).toString
+					hook.last_hooked = new Date()
 					hook.save
 					c.res.code(500)
 					c.res.content("error:" + e.details + " " + e.sourceName + ":" + e.lineNumber)
 				}
 				case e:TimeoutError => {
 					hook.result = "timeout"
+					hook.last_hooked = new Date()
 					hook.save
 					c.res.code(500)
 					c.res.content("timeout")
 				}
 				case e:RestrictError => {
 					hook.result = e.getMessage
+					hook.last_hooked = new Date()
 					hook.save
 					c.res.code(500)
 					c.res.content(e.getMessage)
