@@ -6,7 +6,6 @@ pre {
 	line-height: 1.3;
 	overflow: auto;
 	font-family: "Consolas", "Monaco", "Lucida Console", monospace;
-	min-height: 10em;
 }
 
 code {
