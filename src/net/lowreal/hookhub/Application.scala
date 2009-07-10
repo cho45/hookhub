@@ -336,6 +336,12 @@ class AppHttpRouter extends HttpRouter {
 				hook.delete
 				c.redirect("/" + c.user.nick + "/")
 			}
+			case ("POST", "change") => {
+				c.requireSid
+				hook.updateToken
+				hook.save
+				c.redirect("/" + c.user.nick + "/hook/" + hook.key.getId)
+			}
 			case _ => { }
 		}
 

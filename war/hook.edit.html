@@ -22,10 +22,13 @@
 
 	<div class="section">
 		<h3>Hook URI <span class="less">(only you can see)</span></h3>
-		<form action="" mehtod="post">
+		<form action="" method="post">
 			<p>
+				<input type="hidden" name="sid" value="<%= c.req().session().getId() %>"/>
 				<input type="text" value="<%= c.absolute("/hook/" + hook.token()) %>" size="80" onclick="this.select()" onfocus="this.select()" class="text"/>
-				<input type="hidden" name="mode" value="changeToken" />
+				<input type="hidden" name="mode" value="change" />
+			</p>
+			<p>
 				<input type="submit" value="Change" />
 			</p>
 		</form>
