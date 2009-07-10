@@ -51,7 +51,7 @@ class HookhubContext (c:Context) extends Context(c.req, c.res, c.stash) {
 
 	def isUserAdmin ():Boolean = {
 		US.isUserAdmin ||
-		c.user.email == "cho45@lowreal.net"
+		c.user.email == "cho45@lowreal.net" ||
 		c.user.email == "admin@hookhub.com"
 	}
 

@@ -32,6 +32,8 @@ object HookRunner {
 			val method:String = (if (obj.has("method", obj)) obj.get("method", obj).asInstanceOf[String] else "GET").toUpperCase;
 
 			val url  = new URL(obj.get("url", obj).asInstanceOf[String])
+			if (url.getHost == "www.hookhub.com") throw new RestrictError("invalid host")
+
 			val http = url.openConnection().asInstanceOf[HttpURLConnection]
 			http.setConnectTimeout(3)
 			http.setReadTimeout(3)
