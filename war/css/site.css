@@ -63,6 +63,8 @@ a img {
 
 input.button {
 	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border-radius: 5px;
 	background: #000;
 	color: #fff;
 	border: 1px solid #666;
@@ -177,10 +179,6 @@ form dl dd.code textarea.error {
 }
 
 #search input.button {
-	-moz-border-radius: 5px;
-	background: #000;
-	color: #fff;
-	border: 1px solid #666;
 	padding: 0 0.5em;
 }
 
