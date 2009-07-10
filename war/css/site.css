@@ -60,6 +60,23 @@ form input.text:focus {
 	background: #efefef;
 }
 
+form dl dd.code {
+	position: relative;
+}
+
+form dl dd.code div.error {
+	position: absolute;
+	top: 1px;
+	right: -1px;
+	background: #000;
+	padding: 0.2em 1em;
+	color: #fff;
+}
+
+form dl dd.code textarea.error {
+	background: #ffeeee;
+}
+
 #whole {
 	width: 80%;
 	padding: 2em;
