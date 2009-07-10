@@ -15,6 +15,12 @@ body {
 	font-family: "Tahoma", sans-serif;
 }
 
+tr,
+td {
+	text-align: left;
+	padding: 0 2em 0 0;
+}
+
 .less {
 	font-size: 80%;
 }
@@ -243,3 +249,10 @@ form dl dd.code textarea.error {
 #footer address {
 	font-style: normal;
 }
+
+
+#config form dt,
+#config form dd {
+	display: inline;
+}
+
