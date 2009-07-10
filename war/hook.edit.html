@@ -16,7 +16,7 @@
 			<% if (hook.parent()) { %>
 			<input type="hidden" name="parent" value="<%= hook.parent().id() || "" %>"/>
 			<% } %>
-			<input type="submit" value="Submit"/>
+			<input type="submit" value="Submit" class="button"/>
 		</p>
 	</form>
 
@@ -30,7 +30,7 @@
 				<input type="hidden" name="mode" value="change" />
 			</p>
 			<p>
-				<input type="submit" value="Change" />
+				<input type="submit" value="Change" class="button" />
 			</p>
 		</form>
 		<p>You can test this hook with curl:</p>
@@ -52,7 +52,7 @@
 			<input type="hidden" name="sid" value="<%= c.req().session().getId() %>"/>
 			<input type="hidden" name="id" value="<%= hook.key().getId() || "" %>"/>
 			<input type="hidden" name="mode" value="delete"/>
-			<input type="submit" value="Delete"/>
+			<input type="submit" value="Delete" class="button"/>
 		</p>
 	</form>
 </div>

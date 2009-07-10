@@ -11,7 +11,7 @@
 		</dl>
 		<p>
 			<input type="hidden" name="sid" value="<%= c.req().session().getId() %>"/>
-			<input type="submit" value="Save"/>
+			<input type="submit" value="Save" class="button"/>
 		</p>
 	</form>
 
@@ -35,7 +35,7 @@
 							<input type="hidden" name="sid" value="<%= c.req().session().getId() %>"/>
 							<input type="hidden" name="id" value="<%= config.key().getId() %>"/>
 							<input type="hidden" name="mode" value="delete"/>
-							<input type="submit" value="Delete"/>
+							<input type="submit" value="Delete" class="button"/>
 						</span>
 					</form>
 				</td>

@@ -61,6 +61,14 @@ a img {
 	border: none;
 }
 
+input.button {
+	-moz-border-radius: 5px;
+	background: #000;
+	color: #fff;
+	border: 1px solid #666;
+	padding: 0.2em 0.5em;
+}
+
 form {
 }
 
@@ -173,6 +181,7 @@ form dl dd.code textarea.error {
 	background: #000;
 	color: #fff;
 	border: 1px solid #666;
+	padding: 0 0.5em;
 }
 
 #recently-hooked h2 {
