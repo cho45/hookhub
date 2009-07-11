@@ -63,7 +63,19 @@ end
 task :default => :run
 
 task :deploy do
+	require "pit"
+	require "open-uri"
+	uri = URI(Pit.get("www.hookhub.com", :require => {
+		"deploy_hook" => "http://www.hookhub.com/hook/...",
+	})["deploy_hook"])
+	uri.query = "status=" + URI.encode("Deployed New Version: http://www.hookhub.com/")
+
 	sh GAE_SDK + "bin/appcfg.sh", "update", "war"
+	open(uri) {|r| puts r.read } 
+end
+
+task :rollback do
+	sh GAE_SDK + "bin/appcfg.sh", "rollback", "war"
 end
 
 task :run => [:build] do
