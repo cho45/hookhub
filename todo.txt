@@ -10,6 +10,8 @@
  * post 先 URL によるソート
  * curl によりテストヘルプ
  * commits number
+ * リクエストタイムを計ってコメントにうめこむ
+ * タグ機能実装
 
 
 PubSubHubbub と比較して、JS を使いデータ加工を行うメリット

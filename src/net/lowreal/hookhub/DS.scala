@@ -31,11 +31,11 @@ object Cache {
 	}
 }
 
-class DS [T <: DS[T]] () {
+class DS [T <: DS[T]] () extends java.io.Serializable {
 	def entityName = this.getClass.getName
 
 	var entity:Entity = new Entity(entityName)
-	val datastore = DatastoreServiceFactory.getDatastoreService
+	def datastore = DatastoreServiceFactory.getDatastoreService
 
 	// def _entity_= (e:Entity) = entity = Entity
 

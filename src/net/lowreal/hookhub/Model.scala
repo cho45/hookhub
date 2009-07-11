@@ -15,7 +15,9 @@ class Hook extends DS[Hook]() {
 	}
 
 	def user_= (o:UserInfo) = update('user, o.email)
-	def user = UserInfo.find('email -> apply('user, "")).getOrElse(null)
+	def user = Cache.key[UserInfo](apply('user, "")) {
+		UserInfo.find('email -> apply('user, "")).getOrElse(null)
+	}
 
 	def title_= (o:String) = update('title, o)
 	def title = apply[String]('title, "")
@@ -83,7 +85,9 @@ class UserInfo extends DS[UserInfo]() {
 object Comment extends Comment()
 class Comment extends DS[Comment]() {
 	def user_= (o:UserInfo) = update('user, o.email)
-	def user = UserInfo.find('email -> apply('user, "")).getOrElse(null)
+	def user = Cache.key[UserInfo](apply('user, "")) {
+		UserInfo.find('email -> apply('user, "")).getOrElse(null)
+	}
 
 	def parent_= (o:Hook) = update('parent, o.id)
 	def parent = apply[Long]('parent).map { Hook.find(_).getOrElse(null) }.getOrElse[Hook](null)
