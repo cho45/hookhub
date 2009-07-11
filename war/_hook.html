@@ -1,4 +1,5 @@
 <div class="hook">
+	<!-- <%= v.time() %> -->
 	<div class="title">
 		<a href="/<%= hook.user().nick() %>/hook/<%= hook.key().getId() %>">
 			<%= String(hook.title()) || "Untitled" %>
@@ -18,4 +19,5 @@
 	<div class="code">
 		<pre><a href="/<%= hook.user().nick() %>/hook/<%= hook.key().getId() %>"><%= hook.code() %></a></pre>
 	</div>
+	<!-- <%= v.time() %> -->
 </div>

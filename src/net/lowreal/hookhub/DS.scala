@@ -4,6 +4,7 @@ import com.google.appengine.api.datastore._
 import com.google.appengine.api.datastore.FetchOptions.Builder._
 import com.google.appengine.api.memcache._
 import scala.collection.jcl.Conversions._
+import scala.collection.mutable.HashMap
 
 object Cache {
 	val memcache  = MemcacheServiceFactory.getMemcacheService
@@ -121,18 +122,25 @@ class DS [T <: DS[T]] () extends java.io.Serializable {
 	def key = entity.getKey
 	def id  = key.getId
 
+	val cache = new HashMap[Any, Any]
+
 	protected def update (key:Symbol, value:Any):Unit = {
 		entity.setProperty(key.name, value)
 	}
 
 	protected def apply[U](key:Symbol, ifnone: => U):U = {
-		val ret = entity.getProperty(key.name).asInstanceOf[U]
-		if (ret == null) return ifnone
-		ret
+		if (! cache.contains(key)) {
+			var ret = entity.getProperty(key.name).asInstanceOf[U]
+			if (ret == null) ret = ifnone
+			cache(key) = ret
+			ret
+		} else {
+			cache(key).asInstanceOf[U]
+		}
 	}
 
 	protected def apply[U](key:Symbol):Option[U] = {
-		val ret = entity.getProperty(key.name).asInstanceOf[U]
+		var ret = entity.getProperty(key.name).asInstanceOf[U]
 		if (ret == null) return None
 		Some(ret)
 	}
