@@ -47,7 +47,7 @@
 <% if (hook.key().getId()) { %>
 <div id="edit-hook" class="section">
 	<h2>Delete Hook</h2>
-	<form action="" method="post">
+	<form action="" method="post" onsubmit="return !!confirm('Are you sure?')">
 		<p>
 			<input type="hidden" name="sid" value="<%= c.req().session().getId() %>"/>
 			<input type="hidden" name="id" value="<%= hook.key().getId() || "" %>"/>

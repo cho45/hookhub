@@ -9,7 +9,7 @@
  * hook disable
  * post 先 URL によるソート
  * curl によりテストヘルプ
- * test commit
+ * commits number
 
 
 PubSubHubbub と比較して、JS を使いデータ加工を行うメリット
