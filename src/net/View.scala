@@ -1,10 +1,13 @@
 package net.lowreal.hookhub
 
 import scala.io.Source
+import java.util.Date
 
 // import net.lowreal.skirts._
 import org.mozilla.javascript._
 class RhinoView[T <: net.lowreal.skirts.Context] {
+	val startTime = new Date
+
 	def apply(name:String, context:T) = {
 		context.res.header("Content-Type", "text/html; charset=utf-8")
 		context.res.content(render(name, context))
@@ -16,6 +19,10 @@ class RhinoView[T <: net.lowreal.skirts.Context] {
 
 	def log (obj:Any) {
 		println(obj)
+	}
+
+	def time ():String = {
+		((new Date).getTime - startTime.getTime).toString
 	}
 
 	def render (name:String, context:T):String = {
