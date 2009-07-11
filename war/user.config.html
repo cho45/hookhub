@@ -28,7 +28,13 @@
 			<% for (var i = 0; i < configs.length(); i++) { var config = configs.apply(i) %>
 			<tr>
 				<td><%= config.name() %></td>
-				<td><%= config.value() %></td>
+				<td>
+					<% if (config.name().match(/pass/)) { %>
+					<%= new Array(config.value().length()).join("*") %>
+					<% } else {%>
+					<%= config.value() %>
+					<% } %>
+				</td>
 				<td>
 					<form action="" method="post">
 						<span>
