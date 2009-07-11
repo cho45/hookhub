@@ -24,7 +24,6 @@ class HookhubContext (c:Context) extends Context(c.req, c.res, c.stash) {
 	}
 
 	def requireUser () = {
-		c.requireAdmin // XXX :
 		val user = c.user
 		if (user == null) {
 			c.redirect("/login")
@@ -42,7 +41,6 @@ class HookhubContext (c:Context) extends Context(c.req, c.res, c.stash) {
 	}
 
 	def requireUserIsAuthor () = {
-		c.requireAdmin // XXX :
 		c.requireUser
 		if (!userIsAuthor) {
 			throw new Redirect("/")
@@ -264,6 +262,7 @@ class AppHttpRouter extends HttpRouter {
 
 		val user = UserInfo.find('nick -> c.req.param("user")).getOrElse(throw new NotFound)
 
+		c.stash("profile") = Profile.find('user -> c.user.email).getOrElse(null)
 		c.stash("hooks") = Hook.select('user -> user.email, 'order -> ('created, 'desc)).toList
 		c.view("user")
 	}
@@ -391,9 +390,20 @@ class AppHttpRouter extends HttpRouter {
 				config.delete
 				c.redirect("/" + c.user.nick + "/config")
 			}
+			case ("POST", "profile") => {
+				c.requireSid
+
+				val body    = c.req.param("body")
+				val profile = Profile.ensure('user -> c.user.email)
+				profile.user = c.user
+				profile.body = body
+				profile.save
+			}
 			case _ => { }
 		}
 
+		
+		c.stash("profile") = Profile.find('user -> c.user.email).getOrElse(null)
 		c.stash("configs") = Config.select('user -> c.user.email, 'order -> 'name).toList
 		c.view("user.config")
 	}

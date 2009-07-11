@@ -1,23 +1,24 @@
 <div class="hook">
 	<!-- <%= v.time() %> -->
+	<% hook_user = hook.user() %>
 	<div class="title">
-		<a href="/<%= hook.user().nick() %>/hook/<%= hook.key().getId() %>">
+		<a href="/<%= hook_user.nick() %>/hook/<%= hook.key().getId() %>">
 			<%= String(hook.title()) || "Untitled" %>
 		</a>
 
-		<% if (hook.user() == user) { %>
+		<% if (hook_user == user) { %>
 		<span class="less">
 			(<a href="/<%= user %>/hook/<%= hook.key().getId() %>/edit">Edit</a>)
 		</span>
 		<% } %>
 	</div>
 	<div class="author">
-		<a href="/<%= hook.user().nick() %>/">
-			<img src="<%= hook.user().icon() %>" width="60" height="60" alt="<%= hook.user().nick() %>"/>
+		<a href="/<%= hook_user.nick() %>/">
+			<img src="<%= hook_user.icon() %>" width="60" height="60" alt="<%= hook_user.nick() %>"/>
 		</a>
 	</div>
 	<div class="code">
-		<pre><a href="/<%= hook.user().nick() %>/hook/<%= hook.key().getId() %>"><%= hook.code() %></a></pre>
+		<pre><a href="/<%= hook_user.nick() %>/hook/<%= hook.key().getId() %>"><%= hook.code() %></a></pre>
 	</div>
 	<!-- <%= v.time() %> -->
 </div>

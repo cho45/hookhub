@@ -1,4 +1,20 @@
 <%include= _header %>
+<div id="desc" class="section">
+	<h2>Your Profile</h2>
+	<form action="" method="post">
+		<p>
+		<textarea name="body" cols="50" rows="10"><%=
+			stash('profile') ? stash('profile').body() : ""
+		%></textarea>
+		</p>
+		<p>
+			<input type="hidden" name="sid" value="<%= c.req().session().getId() %>"/>
+			<input type="hidden" name="mode" value="profile"/>
+			<input type="submit" value="Save"/>
+		</p>
+	</form>
+</div>
+
 <div id="config" class="section">
 	<h2>Config</h2>
 	<p>You can access these data from your code.</p>
