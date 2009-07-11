@@ -394,6 +394,6 @@ class AppHttpRouter extends HttpRouter {
 		}
 
 		c.stash("configs") = Config.select('user -> c.user.email, 'order -> 'name).toList
-		c.view("user/config")
+		c.view("user.config")
 	}
 }
