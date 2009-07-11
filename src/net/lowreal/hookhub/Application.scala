@@ -262,7 +262,7 @@ class AppHttpRouter extends HttpRouter {
 
 		val user = UserInfo.find('nick -> c.req.param("user")).getOrElse(throw new NotFound)
 
-		c.stash("profile") = Profile.find('user -> c.user.email).getOrElse(null)
+		c.stash("profile") = Profile.find('user -> user.email).getOrElse(null)
 		c.stash("hooks") = Hook.select('user -> user.email, 'order -> ('created, 'desc)).toList
 		c.view("user")
 	}
