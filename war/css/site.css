@@ -299,6 +299,14 @@ form dl dd.code textarea.error {
 	font-size: 10px;
 }
 
+#hook .section.code .author form {
+	margin: 5px 0;
+}
+
+#hook .section.code .author form .button {
+	width: 60px;
+}
+
 #hook .section.code .code {
 	margin: 0 0 0 70px;
 	padding: 0;

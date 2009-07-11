@@ -191,7 +191,7 @@ class AppHttpRouter extends HttpRouter {
 		val hook   = Hook.find('token -> token).getOrElse(throw new NotFound)
 		val stash  = new HashMap[String, Any]
 		val config = new HashMap[String, String]
-		for (c <- Config.select('user -> hook.user.email)) {
+		for (c <- hook.user.config) {
 			config(c.name) = c.value
 		}
 		stash += "config"  -> config
