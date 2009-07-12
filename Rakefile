@@ -71,7 +71,7 @@ task :deploy do
 	uri.query = "status=" + URI.encode("Deployed New Version: http://www.hookhub.com/")
 
 	sh GAE_SDK + "bin/appcfg.sh", "update", "war"
-	open(uri) {|r| puts r.read } 
+#	open(uri) {|r| puts r.read } 
 end
 
 task :rollback do

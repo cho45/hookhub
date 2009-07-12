@@ -13,6 +13,8 @@
 		<include path="/css/*" />
 		<include path="/images/*" />
 		<include path="/static/*" />
+		<include path="/robots.txt" />
+		<include path="/favicon.ico" />
 	</static-files>
 
 	<!--system-properties>

@@ -126,8 +126,9 @@ class AppHttpRouter extends HttpRouter {
 	}
 
 	route("/") { c =>
-		c.stash("hooks") = Hook.select('order -> ('last_hooked, 'desc), 'limit -> 10).toList
-		Hook.find('order -> ('last_hooked, 'desc), 'limit -> 10).toList(0).user
+		c.stash("hooks") = Hook.select('order -> ('last_hooked, 'desc), 'limit -> 30).toList
+		// c.stash("random_hooks") = Hook.select('order -> ('last_hooked, 'desc), 'limit -> 10).toList
+		// c.stash("most_forked") = Hook.select('order -> ('last_hooked, 'desc), 'limit -> 10).toList
 		c.view("index")
 	}
 
