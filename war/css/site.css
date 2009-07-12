@@ -336,3 +336,7 @@ form dl dd.code textarea.error {
 	min-height: 5em;
 	padding: 0 1em;
 }
+
+#cse-search-results iframe {
+	width: 100%;
+}
