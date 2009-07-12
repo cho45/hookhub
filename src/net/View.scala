@@ -6,7 +6,7 @@ import java.util.Date
 // import net.lowreal.skirts._
 import org.mozilla.javascript._
 class RhinoView[T <: net.lowreal.skirts.Context] {
-	val startTime = new Date
+	var lastTime = new Date
 
 	def apply(name:String, context:T) = {
 		context.res.header("Content-Type", "text/html; charset=utf-8")
@@ -22,7 +22,9 @@ class RhinoView[T <: net.lowreal.skirts.Context] {
 	}
 
 	def time ():String = {
-		((new Date).getTime - startTime.getTime).toString
+		val ret = ((new Date).getTime - lastTime.getTime).toString
+		lastTime = new Date
+		ret
 	}
 
 	def render (name:String, context:T):String = {
