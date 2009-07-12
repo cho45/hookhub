@@ -5,12 +5,6 @@
 		<a href="/<%= hook_user.nick() %>/hook/<%= hook_key %>">
 			<%= String(hook.title()) || "Untitled" %>
 		</a>
-
-		<% if (hook_user == user) { %>
-		<span class="less">
-			(<a href="/<%= user %>/hook/<%= hook_key %>/edit">Edit</a>)
-		</span>
-		<% } %>
 	</div>
 	<div class="author">
 		<a href="/<%= hook_user.nick() %>/">
