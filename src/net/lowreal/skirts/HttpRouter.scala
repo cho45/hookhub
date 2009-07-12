@@ -11,6 +11,8 @@ import scala.io.Source
 import scala.collection.jcl._
 
 import java.util.regex.Matcher
+import java.net.URLDecoder
+
 class MyString (s:String) {
 	def replace (source:String, replace:(Matcher => String)) = {
 		val m = source.r.pattern.matcher(s)
@@ -102,7 +104,7 @@ trait HttpRouter {
 					val rcaptur       = r.capture.toArray
 					val capture:Match = m.get
 					for ( (key, value) <- rcaptur.zip(capture.subgroups.toArray) if key.length > 0) {
-						ctx.req.param(key) = value
+						ctx.req.param(key) = URLDecoder.decode(value, "UTF-8")
 					}
 					r.handler(ctx)
 					throw new Success

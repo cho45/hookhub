@@ -162,7 +162,7 @@ class AppHttpRouter extends HttpRouter {
 		c.req.method match {
 			case "POST" => {
 				val nick = c.req.param("nick")
-				if (nick.length >= 5) {
+				if (nick.matches("[a-zA-Z0-9]{5,20}")) {
 					if (UserInfo.find('nick -> nick).isEmpty) {
 						c.user.nick = nick
 						c.user.save
@@ -171,7 +171,7 @@ class AppHttpRouter extends HttpRouter {
 						c.stash("message") = nick + " is already used."
 					}
 				} else {
-					c.stash("message") = "too short"
+					c.stash("message") = "nick length must be between 5 and 20, and contains only alhpabets and number"
 				}
 			}
 			case _ => {
