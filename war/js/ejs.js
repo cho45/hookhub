@@ -3,6 +3,7 @@ EJS.prototype = {
 	initialize : function (template, opts) {
 		this.template  = template;
 		this.generator = this.compile(template, opts || {});
+
 		this.processor = this.generator();
 		// print(this.processor);
 	},
@@ -72,6 +73,15 @@ Global = (function () {
 
 	this.user   = String(stash("user"));
 	this.author = String(stash("author"));
+
+	this.cache = function (key, ifnone) {
+		var ret = c.cache(key);
+		if (ret === null) {
+			ret = ifnone();
+			c.cache(key, ret)
+		}
+		return ret;
+	};
 
 	return this;
 })();

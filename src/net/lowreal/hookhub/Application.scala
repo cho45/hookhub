@@ -13,6 +13,7 @@ import com.google.appengine.api.mail._
 // import javax.mail.{AddressException, InternetAddress, MessagingException, MimeMessage, Message, Session, Transport}
 
 import org.mozilla.javascript.RhinoException
+import com.google.appengine.api.memcache._
 
 class HookhubContext (c:Context) extends Context(c.req, c.res, c.stash) {
 	implicit def ctx2myctx (c:Context) = new HookhubContext(c)
@@ -76,6 +77,25 @@ class HookhubContext (c:Context) extends Context(c.req, c.res, c.stash) {
 			"http://localhost:8080" + path
 		} else {
 			"http://www.hookhub.com" + path
+		}
+	}
+
+	// view から dirty によばれてる……
+	// null を設定したくないので null はキーなしということにしてる
+	def cache (key:String):Object = {
+		println("Cache get:" + key)
+		val mcs = MemcacheServiceFactory.getMemcacheService
+		val ret = mcs.get(key)
+		ret
+	}
+	
+	def cache (key:String, value:Object) {
+		println("Cache put:" + key)
+		val mcs = MemcacheServiceFactory.getMemcacheService
+		if (value == null) {
+			mcs.delete(key)
+		} else {
+			mcs.put(key, value)
 		}
 	}
 
@@ -346,6 +366,7 @@ class AppHttpRouter extends HttpRouter {
 				hook.code  = code
 				if (hook.code.length <= 5000) {
 					hook.save
+					c.cache(hook.key.toString, null)
 					c.redirect("/" + c.user.nick + "/hook/" + hook.key.getId)
 				} else {
 					c.stash("message") = "Code must be within 5000 bytes."
