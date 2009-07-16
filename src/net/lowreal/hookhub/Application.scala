@@ -180,6 +180,8 @@ class AppHttpRouter extends HttpRouter {
 	}
 
 	route("/register") { c =>
+		c.requireUser
+
 		c.req.method match {
 			case "POST" => {
 				val nick = c.req.param("nick")
