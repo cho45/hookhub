@@ -8,7 +8,7 @@
 			<dt class="title">Title</dt>
 			<dd class="title"><input type="text" name="title" value="<%= hook.title() || "" %>" class="text"/></dd>
 			<dt class="code">Code</dt>
-			<dd class="code"><textarea name="code" cols="50" rows="20"><%= hook.code() || "" %></textarea></dd>
+			<dd class="code"><textarea name="code" cols="50" rows="20"><%= String(hook.code()) || c.file("js/example.js") %></textarea></dd>
 		</dl>
 		<p>
 			<input type="hidden" name="sid" value="<%= c.req().session().getId() %>"/>
