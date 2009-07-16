@@ -12,7 +12,9 @@
 
 	<% hooks = stash('hooks') %>
 	<% for (var i = 0; i < hooks.length(); i++) { var hook = hooks.apply(i) %>
-	<%include= _hook %>
+	<% ret.push(cache(hook.key().toString(), function () { var ret = []; %>
+		<%include= _hook %>
+	<% return ret.join(''); })) %>
 	<% } %>
 </div>
 
