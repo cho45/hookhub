@@ -1,0 +1,24 @@
+<%include= _header %>
+<div class="section">
+	<h2>Admin</h2>
+
+	<h3>Cache</h3>
+	<% stats = stash("cache_stats") %>
+	<dl>
+		<dt>getBytesReturnedForHits</dt>
+		<dt><%= stats.getBytesReturnedForHits() %></dt>
+		<dt>getHitCount</dt>
+		<dt><%= stats.getHitCount() %></dt>
+		<dt>getItemCount</dt>
+		<dt><%= stats.getItemCount() %></dt>
+		<dt>getMaxTimeWithoutAccess</dt>
+		<dt><%= stats.getMaxTimeWithoutAccess() %></dt>
+		<dt>getMissCount</dt>
+		<dt><%= stats.getMissCount() %></dt>
+		<dt>getTotalItemBytes</dt>
+		<dt><%= stats.getTotalItemBytes() %></dt>
+		<dt>Hit percent</dt>
+		<dt><%= stats.getHitCount() / (stats.getHitCount() + stats.getMissCount()) %></dt>
+	</dl>
+</div>
+<%include= _footer %>

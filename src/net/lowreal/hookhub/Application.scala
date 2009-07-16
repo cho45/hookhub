@@ -138,6 +138,12 @@ class AppHttpRouter extends HttpRouter {
 		c.redirect(US.createLogoutURL("/"))
 	}
 
+	route("/admin") { c =>
+		c.requireAdmin
+		c.stash("cache_stats") = MemcacheServiceFactory.getMemcacheService.getStatistics
+		c.view("admin")
+	}
+
 	route("/:static") { c =>
 		c.view(c.req.param("static"))
 	}
