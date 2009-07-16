@@ -26,7 +26,7 @@ title = String(hook.title())
 			<% } %>
 
 			<% if (c.user()) { %>
-			<form action="/<%= user %>/hook/new">
+			<form action="/my/hook/new">
 				<input type="hidden" name="fork" value="<%= hook.id() %>"/>
 				<input type="submit" value="Fork" class="button"/>
 			</form>

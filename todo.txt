@@ -11,6 +11,7 @@
  * curl によりテストヘルプ
  * commits number
  * リクエストタイムを計ってコメントにうめこむ
+ * cron hook
 
 
 PubSubHubbub と比較して、JS を使いデータ加工を行うメリット

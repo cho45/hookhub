@@ -73,6 +73,11 @@ class DS [T <: DS[T]] () extends java.io.Serializable {
 				case ('chunkSize, n:Int) => {
 					fopts.chunkSize(n)
 				}
+				case ('keysOnly, true) => {
+					query.setKeysOnly
+				}
+				case ('keysOnly, false) => {
+				}
 				case _ => {
 					query.addFilter(key.name, Query.FilterOperator.EQUAL, value)
 				}

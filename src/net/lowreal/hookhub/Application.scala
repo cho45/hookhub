@@ -206,6 +206,11 @@ class AppHttpRouter extends HttpRouter {
 		c.res.redirect("/" + c.user.nick + "/")
 	}
 
+	route("/my/*rest") { c => 
+		c.requireUser
+		c.res.redirect("/" + c.user.nick + "/" + c.req.param("rest") + "?" + c.req.query)
+	}
+
 	route("/hook/:token") { c => 
 		val token  = c.req.param("token")
 		val hook   = Hook.find('token -> token).getOrElse(throw new NotFound)

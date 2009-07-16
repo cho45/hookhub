@@ -30,7 +30,9 @@ class Hook extends DS[Hook]() {
 	def code = apply[Text]('code, new Text("")).getValue
 
 	def parent_= (o:Hook) = update('parent, o.id)
-	def parent = apply[Long]('parent).map { Hook.find(_).getOrElse(null) }.getOrElse[Hook](null)
+	def parent = apply[Long]('parent) flatMap { Hook.find(_) } getOrElse null 
+	// def parent = apply[Long]('parent).flatMap { Hook.find(_) }.getOrElse[Hook](null)
+	// def parent = (for (val id <- apply[Long]('parent); val hook <- Hook.find(id) ) yield hook).getOrElse[Hook](null)
 
 	def created_= (o:Date) = update('created, o)
 	def created = apply[Date]('created, new Date(0))
