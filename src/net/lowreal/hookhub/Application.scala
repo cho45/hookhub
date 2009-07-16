@@ -80,17 +80,13 @@ class HookhubContext (c:Context) extends Context(c.req, c.res, c.stash) {
 		}
 	}
 
-	// view から dirty によばれてる……
-	// null を設定したくないので null はキーなしということにしてる
 	def cache (key:String):Object = {
-		println("Cache get:" + key)
 		val mcs = MemcacheServiceFactory.getMemcacheService
 		val ret = mcs.get(key)
 		ret
 	}
 	
 	def cache (key:String, value:Object) {
-		println("Cache put:" + key)
 		val mcs = MemcacheServiceFactory.getMemcacheService
 		if (value == null) {
 			mcs.delete(key)
@@ -126,7 +122,9 @@ class AppHttpRouter extends HttpRouter {
 	}
 
 	route("/") { c =>
-		c.stash("hooks") = Hook.select('order -> ('last_hooked, 'desc), 'limit -> 30).toList
+		c.stash("hooks") = Cache.key("last_hooked", Expiration.byDeltaSeconds(60 * 60)) {
+			Hook.select('order -> ('last_hooked, 'desc), 'limit -> 30).toList
+		}
 		// c.stash("random_hooks") = Hook.select('order -> ('last_hooked, 'desc), 'limit -> 10).toList
 		// c.stash("most_forked") = Hook.select('order -> ('last_hooked, 'desc), 'limit -> 10).toList
 		c.view("index")

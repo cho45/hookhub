@@ -10,25 +10,33 @@ object Cache {
 	val memcache  = MemcacheServiceFactory.getMemcacheService
 
 	def get[T](key:Object):Option[T] = {
+		println("cache get" + key)
 		val ret = memcache.get(key).asInstanceOf[T]
 		if (ret == null) return None
 		Some(ret)
 	}
 
-	def put (key:Object, value:Object) = {
-		memcache.put(key, value)
+	def put (key:Object, value:Object, expire: Expiration) = {
+		println("cache put" + key)
+		memcache.put(key, value, expire)
 	}
+
+	def put:Unit = put(_:Object, _:Object, null)
 
 	def delete (key:Object):Boolean = {
 		memcache.delete(key)
 	}
 
-	def key[T](key:Object)(els: => T):T = {
+	def key[T](key:Object, expire: Expiration)(els: => T):T = {
 		get[T](key).getOrElse {
 			val ret = els
-			memcache.put(key, els)
-			els
+			put(key, ret.asInstanceOf[Object], expire)
+			ret
 		}
+	}
+
+	def key[T](k:Object)(els: => T):T = {
+		key(k, null)(els)
 	}
 }
 

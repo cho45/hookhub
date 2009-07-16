@@ -1,5 +1,4 @@
 <div class="hook">
-	<!-- <%= v.time() %> -->
 	<% hook_user = hook.user(), hook_key =  hook.id() %>
 	<div class="title">
 		<a href="/<%= hook_user.nick() %>/hook/<%= hook_key %>">
@@ -14,5 +13,4 @@
 	<div class="code">
 		<pre><a href="/<%= hook_user.nick() %>/hook/<%= hook_key %>"><%= hook.code() %></a></pre>
 	</div>
-	<!-- <%= v.time() %> -->
 </div>
