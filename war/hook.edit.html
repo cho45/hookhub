@@ -7,7 +7,7 @@
 		<dl>
 			<dt class="title">Title</dt>
 			<dd class="title"><input type="text" name="title" value="<%= hook.title() || "" %>" class="text"/></dd>
-			<dt class="code">Code</dt>
+			<dt class="code">Code <span class="less">(<a href="/help#reference" target="_blank">Reference</a>)</span></dt>
 			<dd class="code"><textarea name="code" cols="50" rows="20"><%= String(hook.code()) || c.file("js/example.js") %></textarea></dd>
 		</dl>
 		<p>
