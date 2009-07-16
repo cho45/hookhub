@@ -355,6 +355,7 @@ class AppHttpRouter extends HttpRouter {
 
 		c.stash("hook") = hook
 		c.stash("comments") = Comment.select('parent -> hook.id, 'order -> ('created, 'desc)).toList
+		c.stash("childs") = Hook.select('parent -> hook.id, 'order -> ('created, 'desc)).toList
 		c.view("hook")
 	}
 

@@ -14,5 +14,11 @@
 		<property name="parent" direction="asc"/>
 		<property name="created" direction="desc"/>
 	</datastore-index>
+
+
+	<datastore-index kind="net.lowreal.hookhub.Hook$" ancestor="false" source="manual">
+		<property name="parent" direction="asc"/>
+		<property name="created" direction="desc"/>
+	</datastore-index>
 </datastore-indexes>
 
