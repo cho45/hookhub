@@ -1,6 +1,6 @@
 <%include= _header %>
 <div id="recently-hooked" class="section">
-	<h2>Recently Hooked</h2>
+	<h2>Recently Invoked Web Hooks</h2>
 	<% hooks = stash('hooks') %>
 	<% for (var i = 0; i < hooks.length(); i++) { var hook = hooks.apply(i) %>
 	<% ret.push(cache(hook.key().toString(), function () { var ret = []; %>

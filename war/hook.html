@@ -5,7 +5,7 @@ title = String(hook.title())
 <%include= _header %>
 <div id="hook" class="section">
 	<h2>
-		Hook:
+		Web Hooks:
 		<%= hook.title() %>
 	</h2>
 
@@ -120,7 +120,7 @@ title = String(hook.title())
 	</div>
 
 	<div class="section">
-		<h3>Hook URI <span class="less">(only you can see)</span></h3>
+		<h3>Web Hooks URI <span class="less">(only you can see)</span></h3>
 		<p>
 			<input type="text" value="<%= c.absolute("/hook/" + hook.token()) %>" size="80" onclick="this.select()" onfocus="this.select()" class="text"/>
 		</p>
