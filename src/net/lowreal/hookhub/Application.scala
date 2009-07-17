@@ -184,7 +184,10 @@ class AppHttpRouter extends HttpRouter {
 	}
 
 	route("/register") { c =>
-		c.requireUser
+		val user = c.user
+		if (user == null) {
+			c.redirect("/login")
+		}
 
 		c.req.method match {
 			case "POST" => {
