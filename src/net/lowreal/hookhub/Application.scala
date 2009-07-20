@@ -246,7 +246,7 @@ class AppHttpRouter extends HttpRouter {
 					stash("mail") match {
 						case (title:String, body:String) => {
 							val MS = MailServiceFactory.getMailService
-							MS.send(new MailService.Message(c.user.email, c.user.email, title, body))
+							MS.send(new MailService.Message(hook.user.email, hook.user.email, title, body))
 						}
 					}
 				}
